@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>Grid</title>
+      <link rel="stylesheet" href="css/style.css">
+      <link rel="stylesheet" href="css/normalize.min.css">
+      <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+      <script>
+      	var backend;
+		new QWebChannel(qt.webChannelTransport, function (channel) {
+		    backend = channel.objects.backend;
+		});
+		backend.foo();
+      </script>
+   </head>
+   <body style="overflow-y: hidden;">
+
+      <div id="app">
+         <div class="container">
+            <div class="name">
+               <span class="firstname">Grid</span><br>
+            </div>
+
+            <div class="grids">
+			   <div class="box card"> <div class='img'></div> <p>One <br>---</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Two<br> 2 <br> ||</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Three<br> ~~</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Four</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Five<br> =</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Six</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Seven</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Eight</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Nine</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Ten</p></div>
+			   <div class="box card"> <div class="img"></div> <p>One</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Two</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Three</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Four</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Five</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Six</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Seven</p></div>
+			   <div class="box card"> <div class="img"></div> <p>Eight</p></div>
+			</div>
+			<div class="buttons">
+        	</div>
+         </div>
+      </div>
+      <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+      <script src="js/card.js"></script>
+      <script src="js/index.js"></script>
+   </body>
+</html>

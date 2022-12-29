@@ -1,0 +1,154 @@
+
+body {
+  overflow-y: hidden;
+  display: flex;
+  place-content: center;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  #background-color: grey;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.grids {
+   display: grid;
+   grid-template-columns: repeat(5, 150px);
+   grid-auto-rows: 150px;
+   grid-gap: 10px;
+   margin: 10px;
+   padding: 5px;
+} 
+
+#app {
+  display: flex;
+  place-self: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+@media (max-width: 865px) {
+  .grids {
+    grid-template-columns: repeat(4, 150px);
+  }
+}
+
+@media (max-width: 650px) {
+  .grids {
+    grid-template-columns: repeat(3, 150px);
+  }
+}
+
+.box {
+  min-width: 100%;
+  min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+  border-radius: 20px;
+
+}
+
+.box > * {
+  #pointer-events: none;
+  border-radius: 20px;
+}
+
+.box > p {
+  text-shadow: 0px 0px 10px black;
+  position: fixed;
+  top: 10px;
+  left: 30px;
+  transform: translateZ(50px);
+}
+
+.box > .img {
+  filter: brightness(80%);
+  filter: grayscale(80%);
+  position: absolute;
+  min-width: 100%;
+  min-height:  100%;
+}
+
+.bkg {
+  top: 0;
+  min-width: 100%;
+  min-height: 100%;
+  z-index: -999999;
+  position: fixed;
+  pointer-events: none;
+}
+
+body, *::before {
+  #background: url("https://media.giphy.com/media/jcckJbNsK0nLy/giphy.gif") 0 / cover fixed;
+}
+
+.container {
+  user-select: none;
+  #max-width: 1000px;
+  #margin: 100px auto;
+  #background-color: #14151A;
+  background-color: transparent;
+  #background: hsla(0, 0%, 100%, .3);
+  #box-shadow: 5px 3px 30px black;
+  padding: 20px 0 20px 0;
+  font-family:sans-serif;
+  font-weight: 700;
+  overflow: hidden;
+  cursor: default;
+  position: relative;
+  color: white;
+  #mix-blend-mode: difference;
+}
+
+.container::before {
+  content: '';
+  margin: -35px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  filter: blur(20px);
+  z-index: -1;
+}
+
+.name {
+  font-size: 72px;
+  font-weight: 700;
+  color: #000;
+  text-transform: uppercase;
+  color: lightgrey;
+  mix-blend-mode: difference;
+}
+@media (max-width: 768px) {
+  .name {
+    font-size: 48px;
+  }
+  .about {
+    font-size: 13px;
+    width: 350px;
+  }
+}
+
+.firstname {
+  #font-weight: 500;
+  text-transform: none;
+  line-height: 0;
+}
+
+.m-y {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.contact {
+  font-size: 14px;
+  color: #eee;
+  text-transform: uppercase;
+  display: block;
+  margin-top: 50px;
+  margin-bottom: 10px;
+}

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>DEV</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <meta http-equiv="Cache-Control" content="no-cache" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover">
+
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src 'self';font-src 'self'; img-src 'self' data: https:; style-src 'self' ; script-src 'self'"> -->
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="msapplication-starturl" content="/">
+
+  <link rel="icon" type="image/svg" sizes="420x420" href="./images/content/A.svg">
+  <link rel="apple-touch-icon" type="image/svg" sizes="420x420" href="./images/content/A.svg">
+
+  <!-- <meta name="apple-mobile-web-app-status-bar-style" content="default"> -->
+
+  <link rel="stylesheet" href="./css/webfonts/all.css">
+  <link rel="stylesheet" href="./css/fonts/stylesheet.css">
+  <link rel="stylesheet" href="./css/sfpro/sfpro.css">
+  <link rel="stylesheet" href="./css/neuehaas/stylesheet.css">
+
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<script>
+  document.documentElement.style.setProperty('--screen-width', window.outerWidth + "px")
+  document.documentElement.style.setProperty('--screen-height', window.outerHeight + "px")
+</script>
+
+<body>
+
+  <app theme="light">
+
+    <script>
+      var app = document.getElementsByTagName('app')[0]
+      var theme = () => { app.setAttribute('theme', app.getAttribute('theme') == 'light' ? 'dark' : 'light' ) }
+    </script>
+
+    <navigation>
+      <content>
+      <!-- <img logo src="M.svg" onclick="theme()"> -->
+      <svg logo onclick="theme()" xmlns="http://www.w3.org/2000/svg" width="460" height="460" viewBox="0 0 460 460">
+        <path style="fill: var(--label)" d="M370,250L250,370,130,250V370L40,460V40L250,250,460,40V460l-90-90V250Z" transform="translate(-20 -20)"/>
+      </svg>
+      
+      <routes>
+        <a route href>About</a>
+        <a route href>History</a>
+        <a route href>Basics</a>
+        <a route href>Community</a>
+        <a route href>Developer</a>
+        <a route href>About</a>
+        <a route href>History</a>
+        <a route href>Basics</a>
+        <a route href>Community</a>
+        <a route href>Developer</a>
+        <a route href>About</a>
+        <a route href>History</a>
+        <a route href>Basics</a>
+        <a route href>Community</a>
+        <a route href>Developer</a>
+        <a route href>About</a>
+        <a route href>History</a>
+        <a route href>Basics</a>
+        <a route href>Community</a>
+        <a route href>Developer</a>
+        <a route href>About</a>
+        <a route href>History</a>
+        <a route href>Basics</a>
+        <a route href>Community</a>
+        <a route href>Developer</a>
+        <a route href>About</a>
+        <a route href>History</a>
+        <a route href>Basics</a>
+        <a route href>Community</a>
+        <a route href>Developer</a>
+        <a route href>About</a>
+        <a route href>History</a>
+        <a route href>Basics</a>
+        <a route href>Community</a>
+        <a route href>Developer</a>
+      </routes>
+      </content>
+    </navigation>
+
+    <raw>
+      <h1>Welcome</h1>
+      <hr>
+
+      <article>
+        <p><a href="https://en.wikipedia.org/wiki/Swift_(programming_language)">Swift</a> is a fantastic way to write
+          software, whether it’s for phones, desktops, servers, or anything else that runs code. It’s a safe, fast, and
+          interactive programming language that combines the best in modern language thinking with wisdom from the wider
+          <a href="https://en.wikipedia.org/wiki/Apple_Inc.">Apple </a>engineering culture and the diverse contributions
+          from its open-source community.</p>
+        <p>Tradition suggests that the first program in a new language should print the words <a
+            href="https://en.wikipedia.org/wiki/%22Hello,_World!%22_program">"Hello, World!"</a> on the screen. In
+          Swift, this can be done in a single line:</p>
+        <script src="https://gist.github.com/fvrqan/dcd1a89bdf09461f232fc053925530c9.js"></script>
+        <link rel="stylesheet"
+          href="https://github.githubassets.com/assets/gist-embed-00e78e58c090554178aab653e8643d5e.css">
+        <div id="gist93795359" class="gist">
+          <div class="gist-file">
+            <div class="gist-data">
+              <div class="js-gist-file-update-container js-task-list-container file-box">
+                <div id="file-hello-world-swift" class="file my-2">
+
+
+                  <div itemprop="text" class="Box-body p-0 blob-wrapper data type-swift  ">
+
+                    <table class="highlight tab-size js-file-line-container" data-tab-size="8"
+                      data-paste-markdown-skip="">
+                      <tbody>
+                        <tr>
+                          <td id="file-hello-world-swift-L1" class="blob-num js-line-number" data-line-number="1"></td>
+                          <td id="file-hello-world-swift-LC1" class="blob-code blob-code-inner js-file-line"><span
+                              class="pl-c1">print</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello,
+                              world!<span class="pl-pds">"</span></span>)</td>
+                        </tr>
+                        <tr>
+                          <td id="file-hello-world-swift-L2" class="blob-num js-line-number" data-line-number="2"></td>
+                          <td id="file-hello-world-swift-LC2" class="blob-code blob-code-inner js-file-line"><span
+                              class="pl-c"><span class="pl-c">//</span> Prints "Hello, world!"</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+            <div class="gist-meta">
+              <a href="https://gist.github.com/fvrqan/dcd1a89bdf09461f232fc053925530c9/raw/ab853c51b204fa9250a8adbc537af5fd9b142a0d/hello-world.swift"
+                style="float:right">view raw</a>
+              <a
+                href="https://gist.github.com/fvrqan/dcd1a89bdf09461f232fc053925530c9#file-hello-world-swift">hello-world.swift</a>
+              hosted with ❤ by <a href="https://github.com">GitHub</a>
+            </div>
+          </div>
+        </div>
+
+
+        <p>This welcome gives you enough information to start writing code in Swift by showing you how to accomplish a
+          variety of programming tasks.
+        </p>
+      </article>
+
+
+      <h1>History</h1>
+      <hr>
+
+      <p>Development of Swift started in July 2010 by <a href="https://en.wikipedia.org/wiki/Chris_Lattner">Chris
+          Lattner</a>, with the eventual collaboration of many other programmers at Apple. Swift took language ideas
+        "from Objective-C, Rust, Haskell, Ruby, Python, C#, CLU, and far too many others to list". On June 2, 2014, the
+        <a href="https://en.wikipedia.org/wiki/Apple_Worldwide_Developers_Conference">Apple Worldwide Developers
+          Conference</a> (WWDC) application became the first publicly released app written with Swift. A beta version of
+        the programming language was released to registered Apple developers at the conference, but the company did not
+        promise that the final version of Swift would be source code compatible with the test version. Apple planned to
+        make source code converters available if needed for the full release.</p>
+      <p>Swift won first place for Most Loved Programming Language in the annual <a
+          href="https://insights.stackoverflow.com/survey/">Stack Overflow Developer Survey</a> 2015 and second place in
+        2016.</p>
+      <p>In January 2017, Chris Lattner announced his departure from Apple for a new position with Tesla Motors, with
+        the Swift project lead role going to team veteran Ted Kremenek.</p>
+
+
+
+    </raw>
+
+  </app>
+
+  <script>
+    // enhance and add push messaging support, otherwise continue without it.  
+    /*     if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js').then(function (reg) {
+            if (reg.installing) {
+              console.log('Service worker installing');
+            } else if (reg.waiting) {
+              console.log('Service worker installed');
+            } else if (reg.active) {
+              console.log('Service worker active');
+            }
+
+            ##initialiseState(reg);
+          });
+        } else {
+          console.log('Service workers aren\'t supported in this browser.');
+        } */
+  </script>
+
+  <script async defer src="./js/daynight.js"></script>
+  <script async defer src="./js/script.js"></script>
+  <script async defer src="./js/jetpack.js"></script>
+</body>
+
+</html>

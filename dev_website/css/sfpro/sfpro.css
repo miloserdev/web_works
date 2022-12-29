@@ -1,0 +1,20 @@
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('sf-pro-display_semibold.woff2');
+    font-weight: 600;
+    font-style: semibold;
+}
+
+@font-face {
+    font-family: 'SF Pro Text';
+    src: url('sf-pro-text_regular.woff2');
+    font-weight: 200;
+    font-style: regular;
+}
+
+@font-face {
+    font-family: 'SF Pro Text';
+    src: url('sf-pro-text_semibold.woff2');
+    font-weight: 600;
+    font-style: semibold;
+}

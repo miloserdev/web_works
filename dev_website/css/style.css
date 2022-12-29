@@ -1,0 +1,373 @@
+* {
+    box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
+    -webkit-box-sizing: border-box !important;
+
+    transition: all .1806s cubic-bezier(0.04, 0.04, 0.12, 0.96) !important;
+}
+
+/* ::-webkit-scrollbar { display: none; }
+::-webkit-scrollbar-button { display: none; }
+::-webkit-scrollbar-track { display: none; }
+::-webkit-scrollbar-track-piece { display: none; }
+::-webkit-scrollbar-thumb { display: none; }
+::-webkit-scrollbar-corner { display: none; }
+::-webkit-resizer { display: none; } */
+
+
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+ 
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: transparent;
+}
+ 
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #343a4050;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background: #343a4070;
+}
+
+
+
+
+
+html, body {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    padding: 0;
+    margin: 0;
+    font-family: 'SF Pro Text';
+    /* font-weight: 600; */
+}
+
+app {
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    display: grid;
+    grid-template-rows: minmax(100vh, 1fr);
+    grid-template-columns: auto 100vw;
+    grid-template-columns: auto auto;
+    grid-template-areas:
+        "one two";
+    background: var(--accent);
+}
+
+navigation:hover {
+    transform: none;
+    width: 280px !important;
+}
+
+navigation:hover content {
+    /* background: rgb(243, 243, 243); */
+    /* background: black; */
+}
+
+navigation {
+    position: relative;
+    overflow: hidden;
+    width: 280px !important;
+    /* transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -250, 0, 0, 1); */
+}
+
+navigation > content::after {
+    content: "";
+    position: absolute;
+    display: flex;
+    width: 20px;
+    height: 20px;
+    bottom: 20px;
+    place-self: center;
+    animation: 5s anim infinite alternate forwards;
+    background: center url('data:image/svg+xml;charset=UTF-8,<svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="angle-down" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" class="svg-inline--fa fa-angle-down fa-w-8 fa-2x"><path fill="currentColor" d="M119.5 326.9L3.5 209.1c-4.7-4.7-4.7-12.3 0-17l7.1-7.1c4.7-4.7 12.3-4.7 17 0L128 287.3l100.4-102.2c4.7-4.7 12.3-4.7 17 0l7.1 7.1c4.7 4.7 4.7 12.3 0 17L136.5 327c-4.7 4.6-12.3 4.6-17-.1z" class=""></path></svg>') no-repeat;
+    filter: invert(1);
+}
+
+@keyframes anim {
+    80% {
+        transform: translateY(0);
+    }
+    90% {
+        transform: translateY(10px);
+    }
+}
+
+navigation > content {
+    display: grid;
+    position: absolute;
+    width: 280px;
+    height: 100%;
+    grid-template-rows: 280px 1fr;
+    grid-template-columns: 1fr;
+    background: rgb(243, 243, 243);
+    background: var(--secondarySystemBackground);
+}
+
+navigation > content > *[logo] {
+    width: 100px;
+    height: 100px;
+    place-self: center;
+    /* margin-left: calc(150px / 2); */
+    opacity: 0.85;
+    /* filter: contrast(200%); */
+}
+
+navigation > content > routes {
+    display: grid;
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    padding: 80px 0;
+    -webkit-mask-image: linear-gradient(0, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 100%);
+}
+
+navigation > content > routes::-webkit-scrollbar { display: none; }
+
+navigation > content > routes > a {
+    display: flex;
+    width: auto;
+    /* height: 30px; */
+    font-size: 16px;
+    padding: 10px 20px;
+}
+
+
+
+
+
+:not(.gist) a {
+    color: var(--link);
+    text-decoration: none;
+}
+
+:not(.gist) a:hover {
+    opacity: 0.8;
+    /* text-shadow: 0 0 5px #007bff; */
+    filter: drop-shadow(0 0 5px var(--link));/*  drop-shadow(0 0 8px var(--link)); */
+}
+
+
+
+
+
+raw {
+    padding: 20px;
+    padding-bottom: 200px;
+    overflow-y: scroll;
+    z-index: 2;
+    background: var(--systemBackground);
+    color: var(--label);
+}
+
+
+
+h1 {
+    font-size: 2.2em;
+    font-weight: 500;
+    font-weight: 900;
+}
+
+
+article > p {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    text-align: left;
+
+    color: #4d4e53;
+    line-height: 1.6;
+}
+
+
+
+hr {
+    box-sizing: content-box !important;
+    height: 0;
+    overflow: visible;
+    padding-bottom: 0.5em;
+    margin: 1rem 0;
+    border: 0;
+    border-top: 1px solid var(--separator);
+}
+
+
+
+
+
+/*
+bg #2c2d2ee0 
+color #76787a
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* :root {
+    --aaa: env(safe-area-inset-right);
+    --top: 66px;
+    --right: 10px;
+    --bottom: 56px;
+    --left: 10px;
+
+    --font-size-ok: 0.75em;
+    --font-size-mid: 1.1em;
+    --fa-font-size: 1.25em;
+    
+    --accent: #19191a;
+    --accent: #2c2d2e;
+    --accent: #ffffff;
+
+    --header-background: #2c2d2ebd;
+    --header-color: #ffffff;
+    --header-border: #ffffff36;
+    --header-backdrop-filter: saturate(180%) blur(20px);
+
+    --navigator-background: #2c2d2ebd;
+    --navigator-active: #ffffff;
+    --navigator-inactive: #76787a;
+    --navigator-border: #ffffff36;
+    --navigator-backdrop-filter: saturate(180%) blur(20px);
+
+    --destructive: #ff5c5c;
+    --dynamic_blue: #3f8ae0;
+    --dynamic_gray: #a3adb8;
+    --dynamic_green: #4bb34b;
+    --dynamic_orange: #ffa000;
+    --dynamic_purple: #937ff5;
+    --dynamic_red: #ff3347;
+    --dynamic_violet: #a393f5;
+}
+
+
+
+:root {
+    --blue: #007bff;
+    --indigo: #6610f2;
+    --purple: #6f42c1;
+    --pink: #e83e8c;
+    --red: #dc3545;
+    --orange: #fd7e14;
+    --yellow: #ffc107;
+    --green: #28a745;
+    --teal: #20c997;
+    --cyan: #17a2b8;
+    --white: #fff;
+    --gray: #6c757d;
+    --gray-dark: #343a40;
+    --primary: #007bff;
+    --secondary: #6c757d;
+    --success: #28a745;
+    --info: #17a2b8;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --light: #f8f9fa;
+    --dark: #343a40;
+    --breakpoint-xs: 0;
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+    --font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+} */
+
+*[theme=light] {
+    --label: rgba(0.0, 0.0, 0.0, 1.0);
+    --secondaryLabel: rgba(60.0, 60.0, 67.0, 0.6);
+    --tertiaryLabel: rgba(60.0, 60.0, 67.0, 0.3);
+    --quaternaryLabel: rgba(60.0, 60.0, 67.0, 0.18);
+    --systemFill: rgba(120.0, 120.0, 128.0, 0.2);
+    --secondarySystemFill: rgba(120.0, 120.0, 128.0, 0.16);
+    --tertiarySystemFill: rgba(118.0, 118.0, 128.0, 0.12);
+    --quaternarySystemFill: rgba(116.0, 116.0, 128.0, 0.08);
+    --placeholderText: rgba(60.0, 60.0, 67.0, 0.3);
+    --systemBackground: rgba(255.0, 255.0, 255.0, 1.0);
+    --secondarySystemBackground: rgba(242.0, 242.0, 247.0, 1.0);
+    --tertiarySystemBackground: rgba(255.0, 255.0, 255.0, 1.0);
+    --systemGroupedBackground: rgba(242.0, 242.0, 247.0, 1.0);
+    --secondarySystemGroupedBackground: rgba(255.0, 255.0, 255.0, 1.0);
+    --tertiarySystemGroupedBackground: rgba(242.0, 242.0, 247.0, 1.0);
+    --separator: rgba(60.0, 60.0, 67.0, 0.29);
+    --opaqueSeparator: rgba(198.0, 198.0, 200.0, 1.0);
+    --link: rgba(0.0, 122.0, 255.0, 1.0);
+    --darkText: rgba(0.0, 0.0, 0.0, 1.0);
+    --lightText: rgba(255.0, 255.0, 255.0, 0.6);
+    --systemBlue: rgba(0.0, 122.0, 255.0, 1.0);
+    --systemGreen: rgba(52.0, 199.0, 89.0, 1.0);
+    --systemIndigo: rgba(88.0, 86.0, 214.0, 1.0);
+    --systemOrange: rgba(255.0, 149.0, 0.0, 1.0);
+    --systemPink: rgba(255.0, 45.0, 85.0, 1.0);
+    --systemPurple: rgba(175.0, 82.0, 222.0, 1.0);
+    --systemRed: rgba(255.0, 59.0, 48.0, 1.0);
+    --systemTeal: rgba(90.0, 200.0, 250.0, 1.0);
+    --systemYellow: rgba(255.0, 204.0, 0.0, 1.0);
+    --systemGray: rgba(142.0, 142.0, 147.0, 1.0);
+    --systemGray2: rgba(174.0, 174.0, 178.0, 1.0);
+    --systemGray3: rgba(199.0, 199.0, 204.0, 1.0);
+    --systemGray4: rgba(209.0, 209.0, 214.0, 1.0);
+    --systemGray5: rgba(229.0, 229.0, 234.0, 1.0);
+}
+
+
+*[theme="dark"] {
+    --label: rgba(255.0, 255.0, 255.0, 1.0);
+    --secondaryLabel: rgba(235.0, 235.0, 245.0, 0.6);
+    --tertiaryLabel: rgba(235.0, 235.0, 245.0, 0.3);
+    --quaternaryLabel: rgba(235.0, 235.0, 245.0, 0.18);
+    --systemFill: rgba(120.0, 120.0, 128.0, 0.36);
+    --secondarySystemFill: rgba(120.0, 120.0, 128.0, 0.32);
+    --tertiarySystemFill: rgba(118.0, 118.0, 128.0, 0.24);
+    --quaternarySystemFill: rgba(118.0, 118.0, 128.0, 0.18);
+    --placeholderText: rgba(235.0, 235.0, 245.0, 0.3);
+    --systemBackground: rgba(0.0, 0.0, 0.0, 1.0);
+    --secondarySystemBackground: rgba(28.0, 28.0, 30.0, 1.0);
+    --tertiarySystemBackground: rgba(44.0, 44.0, 46.0, 1.0);
+    --systemGroupedBackground: rgba(0.0, 0.0, 0.0, 1.0);
+    --secondarySystemGroupedBackground: rgba(28.0, 28.0, 30.0, 1.0);
+    --tertiarySystemGroupedBackground: rgba(44.0, 44.0, 46.0, 1.0);
+    --separator: rgba(84.0, 84.0, 88.0, 0.6);
+    --opaqueSeparator: rgba(56.0, 56.0, 58.0, 1.0);
+    --link: rgba(9.0, 132.0, 255.0, 1.0);
+    --darkText: rgba(0.0, 0.0, 0.0, 1.0);
+    --lightText: rgba(255.0, 255.0, 255.0, 0.6);
+    --systemBlue: rgba(10.0, 132.0, 255.0, 1.0);
+    --systemGreen: rgba(48.0, 209.0, 88.0, 1.0);
+    --systemIndigo: rgba(94.0, 92.0, 230.0, 1.0);
+    --systemOrange: rgba(255.0, 159.0, 10.0, 1.0);
+    --systemPink: rgba(255.0, 55.0, 95.0, 1.0);
+    --systemPurple: rgba(191.0, 90.0, 242.0, 1.0);
+    --systemRed: rgba(255.0, 69.0, 58.0, 1.0);
+    --systemTeal: rgba(100.0, 210.0, 255.0, 1.0);
+    --systemYellow: rgba(255.0, 214.0, 10.0, 1.0);
+    --systemGray: rgba(142.0, 142.0, 147.0, 1.0);
+    --systemGray2: rgba(99.0, 99.0, 102.0, 1.0);
+    --systemGray3: rgba(72.0, 72.0, 74.0, 1.0);
+    --systemGray4: rgba(58.0, 58.0, 60.0, 1.0);
+    --systemGray5: rgba(44.0, 44.0, 46.0, 1.0);
+}

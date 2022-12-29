@@ -1,0 +1,33 @@
+﻿.card.animateIn {
+    animation: bounceIn 0.7s;
+    transform: scale3d(1.01,1.01,1.01); 
+}
+
+.card.animateOut {
+    animation: bounceOut 0.7s;
+    transform: scale3d(1.00,1.00,1.00); 
+}
+
+@keyframes bounceIn {
+        0%{
+            transform: scale3d(1.00,1.00,1.00);
+        }
+        50%{
+            transform: scale3d(1.02,1.02,1.02);
+        }
+        100%{
+            transform: scale3d(1.01,1.01,1.01);
+        }
+}
+
+@keyframes bounceOut {
+        0%{
+            transform: scale3d(1.01,1.01,1.01); 
+        }
+        50%{
+            transform: scale3d(0.99,0.99,0.99);
+        }
+        100%{
+            transform: scale3d(1.00,1.00,1.00);
+        }
+}
