@@ -1,0 +1,14 @@
+{
+  "users": [
+    {
+      "id": "admin",
+      "password": "$2b$10$yI7ZCY8Az3AHEwYw8jc/H.NQHPxnCtrFf8Y/J5VOynFLBr1etQw.y",
+      "token": "TcGy16&f%nHaXq7Kus#KdsS&#mT18JzGAdX7D0.SP%qPTLr5BiPFN19&9vyhIfHdOuk88FW5de2b.jUjweuz3dJ#%.@@LnZUrNTYWYzVytmjdm2Pu$QkUsZWXCSo@1A1e8tj&3n4hfF4@59B3ViT6tL5z.4%wzV@#sUjJPAVo%Hr2KofDsuaREw6eBDN%fLtAEk8e*WMjoDZ3gN$3UstJePm9M.C74eUzQCzJz#7kLg$7QoA3uXYlDdKsfR0mdl3"
+    },
+    {
+      "id": "asd",
+      "password": "$2b$10$5vCwBiJ.ECa75yH/wM7DC.UfdH4/dDfmrctK1M3WsEeLjI2n4HrIG",
+      "token": "FyOLSIccYdUQ&cD1FexaMP8vJ*NC.8OBhC&VFy%kptmH&C9C4GezzBvOND#n!3&Z6b$&vN10wUnuU*P5AELxUXiGj9vQib1v@zdN4@1mTkKKi*WaIhtqt7UZ%bHybN2M.ltcch2Bxd#fl!3z&W15k$PqgEXehwOF*H6VNrtf0mPMhxo!KyytsgzsE%LMb%$nPHfPNcpndF.*7xzdSmwZy*9gs2DoDXhPmV*SQQhb&xANRJimZfur5B4szJ%J8Q%R"
+    }
+  ]
+}
