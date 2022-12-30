@@ -1,0 +1,191 @@
+* {
+	box-sizing: border-box;
+#    transition-duration: 160ms;
+#    transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+card,
+card:before {
+    transition-duration: 160ms;
+    transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+html, body {
+	display: grid;
+	min-width: 100%;
+	min-height: 100%;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	font-family: sans;
+}
+
+body {
+	background-color: rgb(28, 28, 30);
+	color: rgb(242, 242, 247);
+}
+
+header {
+	width: 100%;
+	height: 5.6em;
+	display: grid;
+	place-content: center;
+	backdrop-filter: blur(20px);
+	position: fixed;
+	z-index: 999;
+	background: #1c1c1eba;
+}
+
+header > h1[title] {
+	font-size: 1.6em;
+}
+
+cards {
+	display: grid;
+	grid-template-columns: repeat(2, 150px);
+	grid-auto-rows: 150px;
+	grid-gap: 30px;
+
+	width: 100%;
+	height: 100%;
+	place-content: center;
+}
+
+cards > card {
+	position: relative;
+	display: grid;
+	place-content: center;
+	background-color: rgb(44, 46, 46);
+	border-radius: 26px;
+	padding-top: 30px;
+}
+
+cards > card  h1,
+cards > card  h2,
+cards > card  h3,
+cards > card  a,
+cards > card  layer {
+	pointer-events: none;
+	user-select: none;
+}
+
+layer > * {
+	pointer-events: all;
+}
+
+
+card[big] {
+  grid-column: 1 / 3;
+  grid-row: 1 / 2;
+	background-color: rgb(0, 122, 255);
+	background-color: rgb(44, 44, 46);
+	filter: drop-shadow(10px 10px 25px #494949);
+#	color: rgb(44, 46, 46);
+
+	grid-template-columns: repeat(2, 120px);
+	grid-auto-rows: 50px;
+	grid-gap: 30px;
+
+}
+
+card[big][status]:before {
+content: "";
+width: 30px;
+height: 30px;
+position: absolute;
+top: 18px;
+right: 18px;
+background-color: white;
+#border-radius: 8px;
+}
+
+card[big][status]::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: white;
+  border-radius: 26px;
+	border-top-right-radius: 26px;
+	border-bottom-right-radius: 26px;
+z-index: -1;
+}
+
+card[big][status="on"]:before {
+#	background-color: #4cd964;
+	filter: drop-shadow(10px 10px 25px #4cd96480);
+	background: linear-gradient(90deg, rgba(0,0,0,0) 0%, #4cd964 100%);
+	background: linear-gradient(154deg, rgba(0,0,0,0) 32%, #4cd964 100%);
+}
+card[big][status="off"]:before {
+#	background-color: #ff3b30;
+	filter: drop-shadow(10px 10px 25px #ff3b3080);
+	background: linear-gradient(90deg, rgba(0,0,0,0) 0%, #ff3b30 100%);
+	background: linear-gradient(154deg, rgba(0,0,0,0) 32%, #ff3b30 100%);
+}
+
+
+cards > card > h1 {
+	font-size: 1.1em;
+	position: absolute;
+	top: 15px;
+	left: 15px;
+}
+
+
+cards > card[toggle="on"] {
+	color: rgb(44, 46, 46);
+	background-color: #4cd964;
+	filter: drop-shadow(10px 10px 25px #4cd96480);
+}
+cards > card[toggle="off"] {
+	color: black;
+	background-color: #ff3b30;
+	filter: drop-shadow(10px 10px 25px #ff3b3080);
+}
+
+
+board {
+padding-top: 8.4em;
+padding-bottom: 8.4em;
+
+display: grid;
+grid-gap: 50px;
+place-content: center;
+  align-content: center;
+overflow: scroll;
+align-content: baseline;
+}
+
+section {
+	display: grid;
+}
+
+section[locked] {
+	filter: blur(5px) saturate(0.1) brightness(0.7);
+	user-select: none;
+	pointer-events: none;}
+
+section > h1 {
+	width: 100%;
+	height: 25px;
+}
+
+
+input[type="time"] {
+	background: transparent;
+	border: 1px solid #a7a7a7;
+	padding: 0;
+	margin: 0;
+	border-radius: 5px;
+	color: white;
+	font-size: 1.3em;
+}
+
+layer {
+font-size: 1.3em;
+display: grid;
+}
