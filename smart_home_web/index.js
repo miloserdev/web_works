@@ -1,13 +1,12 @@
 const fs = require("fs");
 const http = require("http");
 const url = require("url");
-
 const qs = require("querystring");
+
+const devices = require("./devices.json");
 
 const host = "localhost";
 const port = "8091";
-
-const devices = require("./devices.json");
 
 const get_device = (name) => {
 	for (var i = 0; i < devices.length; i++) {
