@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+</html>
+
+<head>
+	<meta name="viewport" content="initial-scale=1">
+	<link href="./css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+	<header>
+		<h1 title>Smart Home</h1>
+	</header>
+
+	<board>
+
+
+	<section>
+		<h1>Boiler room</h1>
+		<cards>
+			<card big status="on"
+			onclick='sends(
+					{ "to": "boiler_1" ,
+						"data": `[{ "digitalWrite": { "pin": 32, "value": 0 } }]` }, 
+				(res) => this.attributes.status.value = 
+					JSON.parse(res)["status"] == 1 ? "on" : "off" )' >
+				<h1>Gas Boiler</h1>
+				<layer style="grid-column: 1 / 4;"></layer>
+				<layer> <a>ON</a><input type="time" step="3600000"> </layer>
+				<layer> <a>OFF</a><input type="time" step="3600000"> </layer>
+				
+			</card>
+			<card toggle="on" onclick='sends(
+					{ "to": "boiler_1" ,
+						"data": `[{ "digitalWrite": { "pin": 32, "value": 0 } }]` }, 
+				(res) => this.attributes.toggle.value = 
+					JSON.parse(res)["status"] == 1 ? "on" : "off" )'>
+			<h1>Pump</h1> </card>
+
+			<card toggle="on" onclick='sends(
+					{ "to": "boiler_1" ,
+						"data": `[{ "digitalWrite": { "pin": 32, "value": 0 } }]` }, 
+				(res) => this.attributes.toggle.value = 
+					JSON.parse(res)["status"] == 1 ? "on" : "off" )'
+			> <h1>Water Boiler</h1> </card>
+		</cards>
+	</section>
+
+
+	<section locked>
+		<h1>Kitchen</h1>
+		<cards>
+			<card toggle="on"> <h1>Light</h1> </card>
+			<card> <h1>Temp</h1> </card>
+		</cards>
+	</section>
+
+	<section locked>
+		<h1>Room</h1>
+		<cards>
+			<card toggle="on"> <h1>Light 1</h1> </card>
+			<card toggle="on"> <h1>Light 2</h1> </card>
+			<card toggle="off"> <h1>Night Light</h1> </card>
+		</cards>
+	</section>
+
+
+	</board>
+
+</body>
+
+<script src="./js/script.js"></script>
+
+</html>

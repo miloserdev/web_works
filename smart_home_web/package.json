@@ -1,0 +1,14 @@
+{
+  "name": "esp_smart_home",
+  "version": "1.0.0",
+  "description": "Smart Home Application",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon --experimental-fetch index.js"
+  },
+  "author": "Miloserdev",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "node-fetch": "^3.3.0"
+  }
+}

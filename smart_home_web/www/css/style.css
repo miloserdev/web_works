@@ -96,7 +96,7 @@ height: 30px;
 position: absolute;
 top: 18px;
 right: 18px;
-background-color: white;
+background-color: transparent;
 #border-radius: 8px;
 }
 
@@ -107,7 +107,7 @@ card[big][status]::before {
   position: absolute;
   top: 0;
   right: 0;
-  background-color: white;
+  background-color: transparent;
   border-radius: 26px;
 	border-top-right-radius: 26px;
 	border-bottom-right-radius: 26px;
@@ -136,12 +136,12 @@ cards > card > h1 {
 }
 
 
-cards > card[toggle="on"] {
+cards > card[normal][status="on"] {
 	color: rgb(44, 46, 46);
 	background-color: #4cd964;
 	filter: drop-shadow(10px 10px 25px #4cd96480);
 }
-cards > card[toggle="off"] {
+cards > card[normal][status="off"] {
 	color: black;
 	background-color: #ff3b30;
 	filter: drop-shadow(10px 10px 25px #ff3b3080);
