@@ -1,4 +1,5 @@
 const board = document.querySelector("board");
+const handler = document.querySelector("handler");
 
 const rooms = [{
     "id": "boiler_room",
@@ -17,7 +18,7 @@ const rooms = [{
                     },
                     (res) => ev.target.attributes.status.value = JSON.parse(res))
             },
-            "onload": (el) => {
+			"update": (el) => {
                 sends({
                         "to": "boiler_1",
                         "data": `[{ "digitalRead": { "pin": 32 } }]`
@@ -26,9 +27,7 @@ const rooms = [{
                         console.log(el);
                         el.attributes.status.value = JSON.parse(res)
                     })
-            },
-            "ip": "192.168.1.69",
-            "port": 8081
+            }
         },
 
 
@@ -44,7 +43,7 @@ const rooms = [{
                     },
                     (res) => ev.target.attributes.status.value = JSON.parse(res))
             },
-            "onload": (el) => {
+			"update": (el) => {
                 sends({
                         "to": "boiler_1",
                         "data": `[{ "digitalRead": { "pin": 33 } }]`
@@ -53,17 +52,23 @@ const rooms = [{
                         console.log(el);
                         el.attributes.status.value = JSON.parse(res)
                     })
-            },
-            "ip": "192.168.1.61",
-            "port": 8081
+            }
         },
 
         {
             "id": "pump_1",
-            "name": "Pump 1",
+            "name": "Boiler Status | Pump 1",
             "params": "normal",
-            "ip": "192.168.1.62",
-            "port": 8081
+			"update": (el) => {
+                sends({
+                        "to": "boiler_1",
+                        "data": `[{ "digitalRead": { "pin": 32 } }]`
+                    },
+                    (res) => {
+                        console.log(el);
+                        el.attributes.status.value = JSON.parse(res)
+                    })
+            }
         }
     ]
 }];
@@ -84,6 +89,9 @@ const load = () => {
 	}
 
 	post_load();
+	
+	setTimeout(() => update(), 1000);
+	document.addEventListener("click", () => update());
 
 };
 
@@ -113,6 +121,25 @@ const post_load = () => {
 
 };
 
+const update = () => {
+
+	for (let i = 0; i < rooms.length; i++) {
+		let room = rooms[i];
+	//	console.log(room.id, room.name);
+
+		for (let c = 0; c < room.devices.length; c++) {
+							// :)
+			let device = room.devices[c];
+		//	console.log(device.id, device.name);
+			let dev = board.querySelector("card[id=" + device.id  + "");
+			if (device.update) {
+				device.update(dev);
+			}
+		}
+	}
+
+};
+
 
 function append_card(section_id, device_id, name, params, onclick) {
 
@@ -135,10 +162,18 @@ function append_section (id, name) {
 
 }
 
+const print_error = (response) => {
+	let errs = response["error"]["cause"];
+	handler.innerHTML = `<a>code: ${errs.code}</a>
+						<a>errno: ${errs.errno}</a>
+						<a>syscall: ${errs.syscall}</a>`;
+	setTimeout(() => handler.innerHTML = "", 10000);
+}
+
 
 const sends = (data, cb) => {
 
-	fetch('http://localhost:8091/', {
+	fetch(location.origin + "", {
 	    method: 'POST',
 	    headers: {
 	        'Accept': 'application/json',
@@ -149,7 +184,9 @@ const sends = (data, cb) => {
 	.then(response => response.json())
 	.then(response => {
 		var result = JSON.stringify(response);
-		console.log(result)
+		if (response["error"] != undefined) {
+			print_error(response);
+		}
 		if (cb) console.log(cb); cb(result);
 	});
 };

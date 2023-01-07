@@ -1,5 +1,23 @@
 [
-	{ "name": "boiler_1", "id": 1, "ip": "192.168.1.65", "port": 80 },
-	{ "name": "boiler_2", "id": 2, "ip": "192.168.1.61", "port": 8081 },
-	{ "name": "pump_1", "id": 3, "ip": "192.168.1.62", "port": 8081 }
+	{
+		"name": "boiler_1",
+		"type": "switch",
+		"id": 1,
+		"ip": "192.168.1.65",
+		"port": 80
+	},
+	{
+		"name": "boiler_2",
+		"type": "switch",
+		"id": 2,
+		"ip": "192.168.1.61",
+		"port": 8081
+	},
+	{
+		"name": "pump_1",
+		"type": "switch",
+		"id": 3,
+		"ip": "192.168.1.62",
+		"port": 8081
+	}
 ]

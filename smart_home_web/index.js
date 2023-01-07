@@ -5,7 +5,7 @@ const qs = require("querystring");
 
 const devices = require("./devices.json");
 
-const host = "localhost";
+const host = "192.168.1.66";
 const port = "8091";
 
 const get_device = (name) => {
@@ -16,7 +16,7 @@ const get_device = (name) => {
 }
 
 
-const not_found = (res, json = false) => {
+const not_found = async (res, json = false) => {
 
 	if (json) {
 		res.setHeader('Content-Type', 'application/json');
@@ -30,13 +30,13 @@ const not_found = (res, json = false) => {
 };
 
 
-const process = (req, res, data) => {
+const process = async (req, res, data) => {
 
 	var dev = get_device(data.to);
-	if (dev < 0) return not_found(res, true);
+	if (dev < 0) return await not_found(res, true);
 
-	try {
-		(async () => {
+//	(async () => {
+		try {
 			const response = await fetch('http://' + dev.ip + ':' + dev.port, {
 			    method: 'POST',
 			    headers: {
@@ -51,21 +51,21 @@ const process = (req, res, data) => {
 			res.setHeader('Content-Type', 'application/json');
 			res.end( JSON.stringify(body) );
 
-		})();
-
-	} catch (e) {
-		console.log(e);
-	}
-
+		} catch (e) {
+			console.log(e);
+			res.setHeader('Content-Type', 'application/json');
+			res.end( JSON.stringify( {"error": e} ) );
+		}
+//	})();
 }
 
 
-const get_listener = (req, res, query) => {
+const get_listener = async (req, res, query) => {
 
 	query.href = query.href == "/" ? "index.html" : query.href;
-	fs.readFile(__dirname + "/www/" + query.href, (err, fd) => {
+	fs.readFile(__dirname + "/www/" + query.href, async (err, fd) => {
 
-		if (err) not_found(res);
+		if (err) await not_found(res);
 
 		res.writeHead(200);
 		res.end(fd);
@@ -73,10 +73,10 @@ const get_listener = (req, res, query) => {
 };
 
 
-const post_listener = (req, res, query) => {
+const post_listener = async (req, res, query) => {
 
 	var body = '';
-	req.on('data', function (data) {
+	req.on('data', async function (data) {
 		body += data;
 		// 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
 		if (body.length > 1e6) {
@@ -85,25 +85,43 @@ const post_listener = (req, res, query) => {
 		}
 	});
 
-	req.on('end', function () {
+	req.on('end', async function () {
 		var POST = qs.parse(body);
-		// use POST
-		console.log(body);
 		var obj = JSON.parse(body);
-		process(req, res, obj);
+		await process(req, res, obj);
 	});
 };
 
 
-const requestListener = (req, res) => {
-
+const requestListener = async (req, res) => {
+	let starts = performance.now();
+	
 	const query = url.parse(req.url, true);
-	return req.method == "GET" ? get_listener(req, res, query) : post_listener(req, res, query);
-
+	let x = await (req.method == "GET"
+					? get_listener(req, res, query)
+					: post_listener(req, res, query) );
+	
+	let ends = performance.now();
+	console.log(`${req.socket.remoteAddress} -> ${req.method} '${req.url}' | time ${ends-starts}`);	
+	return x;
 };
 
 
-const server = http.createServer(requestListener);
-server.listen(port, host, () => {
-	console.log(`Server is running on http://${host}:${port}`);
-});
+
+(main = async () => {
+	try {
+		const server = http.createServer(requestListener);
+		server.listen(port, host, () => {
+			console.log(`Server is running on http://${host}:${port}`);
+		});
+	} catch (e) {
+		console.log("error occured\n", e);
+		setTimeout(() => main(), 1000);
+	}
+})();
+
+
+
+
+
+
