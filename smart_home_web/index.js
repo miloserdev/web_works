@@ -8,7 +8,7 @@ const devices = require("./devices.json");
 const host = "192.168.1.66";
 const port = "8091";
 
-const get_device = (name) => {
+const get_device_by_name = (name) => {
 	for (var i = 0; i < devices.length; i++) {
 		if (devices[i].name == name) return devices[i];
 	}
@@ -32,31 +32,29 @@ const not_found = async (res, json = false) => {
 
 const process = async (req, res, data) => {
 
-	var dev = get_device(data.to);
+	var dev = get_device_by_name(data.to);
 	if (dev < 0) return await not_found(res, true);
 
-//	(async () => {
-		try {
-			const response = await fetch('http://' + dev.ip + ':' + dev.port, {
-			    method: 'POST',
-			    headers: {
-			        'Accept': 'application/json',
-			        'Content-Type': 'application/json'
-			    },
-			    body: JSON.stringify( JSON.parse(data.data) )
-			});
+	try {
+		const response = await fetch('http://' + dev.ip + ':' + dev.port, {
+		    method: 'POST',
+		    headers: {
+		        'Accept': 'application/json',
+		        'Content-Type': 'application/json'
+		    },
+		    body: JSON.stringify( JSON.parse(data.data) )
+		});
+		
+		const body = await response.text();
+		res.setHeader('Content-Type', 'application/json');
+		res.end( JSON.stringify(body) );
+		
+	} catch (e) {
+		console.log(e);
+		res.setHeader('Content-Type', 'application/json');
+		res.end( JSON.stringify( {"error": e} ) );
+	}
 
-			const body = await response.text();
-
-			res.setHeader('Content-Type', 'application/json');
-			res.end( JSON.stringify(body) );
-
-		} catch (e) {
-			console.log(e);
-			res.setHeader('Content-Type', 'application/json');
-			res.end( JSON.stringify( {"error": e} ) );
-		}
-//	})();
 }
 
 
