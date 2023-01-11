@@ -59,6 +59,17 @@ const process = async (req, res, data) => {
 
 
 const get_listener = async (req, res, query) => {
+	
+	if (query.href == "/devices") {
+		fs.readFile(__dirname + "/devices.json", async (err, fd) => {
+
+			if (err) await not_found(res);
+	
+			res.writeHead(200);
+			res.end(fd);
+		});
+		return;
+	}
 
 	query.href = query.href == "/" ? "index.html" : query.href;
 	fs.readFile(__dirname + "/www/" + query.href, async (err, fd) => {
@@ -100,7 +111,7 @@ const requestListener = async (req, res) => {
 					: post_listener(req, res, query) );
 	
 	let ends = performance.now();
-	console.log(`${req.socket.remoteAddress} -> ${req.method} '${req.url}' | time ${ends-starts}`);	
+	console.log(`${req.socket.remoteAddress}:${req.socket.remotePort} -> ${req.method} '${req.url}' | time ${ends-starts}`);	
 	return x;
 };
 

@@ -1,24 +1,52 @@
 [
 	{
-		"name": "gas_boiler_1",
+		"name": "esp01_relay",
 		"type": "switch",
+		"buttons": [
+			{
+			"id": 0,
+				"turn_on": [{ "relay": 0 }],
+				"turn_off": [{ "relay": 1 }],
+				"status": [{ "relay": "state" }]
+			}
+		],
 		"id": 2,
 		"ip": "192.168.1.101",
 		"port": 8081
 	},
+	
 	{
-		"name": "boiler_1",
+		"name": "relay_array_1",
 		"type": "switch",
+		"buttons": [
+			{ 
+				"id": 32,
+				"turn_on": [{ "digitalWrite": { "pin": 32, "value": 0 } }],
+				"turn_off": [{ "digitalWrite": { "pin": 32, "value": 1 } }],
+				"status": [{ "digitalRead": { "pin": 32 } }]
+			},
+						{ 
+			"id": 33,
+				"turn_on": [{ "digitalWrite": { "pin": 33, "value": 0 } }],
+				"turn_off": [{ "digitalWrite": { "pin": 33, "value": 1 } }],
+				"status": [{ "digitalRead": { "pin": 33 } }]
+			},
+						{ 
+			"id": 25,
+				"turn_on": [{ "digitalWrite": { "pin": 25, "value": 0 } }],
+				"turn_off": [{ "digitalWrite": { "pin": 25, "value": 1 } }],
+				"status": [{ "digitalRead": { "pin": 25 } }]
+			},
+						{ 
+			"id": 26,
+				"turn_on": [{ "digitalWrite": { "pin": 26, "value": 0 } }],
+				"turn_off": [{ "digitalWrite": { "pin": 26, "value": 1 } }],
+				"status": [{ "digitalRead": { "pin": 26 } }]
+			}
+		],
 		"id": 1,
 		"ip": "192.168.1.65",
 		"port": 80
-	},
-	{
-		"name": "pump_1",
-		"type": "switch",
-		"id": 3,
-		"ip": "192.168.1.62",
-		"port": 8081
 	}
 
 ]

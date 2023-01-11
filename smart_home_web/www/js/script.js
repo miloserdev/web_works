@@ -4,193 +4,90 @@ const handler = document.querySelector("handler");
 const rooms = [{
     "id": "boiler_room",
     "name": "Boiler Room",
-    "devices": [
-
+    "switches": [
         {
-            "id": "gas_boiler_1",
+            "id": "esp01_relay",
             "name": "Gas Boiler",
             "params": "big",
-            "onclick": (ev) => {
-                sends({
-                        "to": "gas_boiler_1",
-                        "data": `[{ "relay": ${ev.target.attributes.status.value == "on" ? 1 : 0} }]`
-                    },
-                    (res) => ev.target.attributes.status.value = JSON.parse(res))
-            },
-			"update": (el) => {
-                sends({
-                        "to": "gas_boiler_1",
-                        "data": `[{ "relay": "state" }]`
-                    },
-                    (res) => {
-                        console.log(el);
-                        el.attributes.status.value = JSON.parse(res)
-                    })
-            }
+            "type": "button",
+            "device": "esp01_relay",
+            "connect_to": "0"
+            
         },
-
-        {
-            "id": "relay_array_1",
-            "name": "relay_array_1",
-            "params": "normal",
-            "onclick": (ev) => {
-                sends({
-                        "to": "relay_array_1",
-                        "data": `[{ "digitalWrite": { "pin": 33,
-                                 "value":  ${ev.target.attributes.status.value == "on" ? 1 : 0} } }]`
-                    },
-                    (res) => ev.target.attributes.status.value = JSON.parse(res))
-            },
-			"update": (el) => {
-                sends({
-                        "to": "relay_array_1",
-                        "data": `[{ "digitalRead": { "pin": 33 } }]`
-                    },
-                    (res) => {
-                        console.log(el);
-                        el.attributes.status.value = JSON.parse(res)
-                    })
-            }
-        },
-
-        {
-            "id": "relay_array_1",
-            "name": "relay_array_1",
-            "params": "normal",
-            "onclick": (ev) => {
-                sends({
-                        "to": "relay_array_1",
-                        "data": `[{ "digitalWrite": { "pin": 33,
-                                 "value":  ${ev.target.attributes.status.value == "on" ? 1 : 0} } }]`
-                    },
-                    (res) => ev.target.attributes.status.value = JSON.parse(res))
-            },
-			"update": (el) => {
-                sends({
-                        "to": "relay_array_1",
-                        "data": `[{ "digitalRead": { "pin": 33 } }]`
-                    },
-                    (res) => {
-                        console.log(el);
-                        el.attributes.status.value = JSON.parse(res)
-                    })
-            }
-        },
-
+        
         {
             "id": "pump_1",
             "name": "Pump Status",
             "params": "normal",
-			"update": (el) => {
-                sends({
-                        "to": "relay_array_1",
-                        "data": `[{ "digitalRead": { "pin": 32 } }]`
-                    },
-                    (res) => {
-                        console.log(el);
-                        el.attributes.status.value = JSON.parse(res)
-                    })
-            }
+            "type": "stater",
+            "device": "esp01_relay",
+            "connect_to": "0"
         },
-    ]
+	]
 },
-
 {
-    "id": "boiler_room2",
-    "name": "Boiler Room 2",
-    "devices": [
-
+    "id": "boiler_room_2",
+    "name": "Boiler Room",
+    "switches": [
         {
-            "id": "light_1",
-            "name": "Light 1",
-            "params": "normal",
-            "onclick": (ev) => {
-                sends({
-                        "to": "boiler_1",
-                        "data": `[{ "digitalWrite": { "pin": 32,
-                                 "value":  ${ev.target.attributes.status.value == "on" ? 1 : 0} } }]`
-                    },
-                    (res) => ev.target.attributes.status.value = JSON.parse(res))
-            },
-			"update": (el) => {
-                sends({
-                        "to": "boiler_1",
-                        "data": `[{ "digitalRead": { "pin": 32 } }]`
-                    },
-                    (res) => {
-                        console.log(el);
-                        el.attributes.status.value = JSON.parse(res)
-                    })
-            }
-        },
-
-
-        {
-            "id": "light_2",
-            "name": "Light 2",
-            "params": "normal",
-            "onclick": (ev) => {
-                sends({
-                        "to": "boiler_1",
-                        "data": `[{ "digitalWrite": { "pin": 33,
-                                 "value":  ${ev.target.attributes.status.value == "on" ? 1 : 0} } }]`
-                    },
-                    (res) => ev.target.attributes.status.value = JSON.parse(res))
-            },
-			"update": (el) => {
-                sends({
-                        "to": "boiler_1",
-                        "data": `[{ "digitalRead": { "pin": 33 } }]`
-                    },
-                    (res) => {
-                        console.log(el);
-                        el.attributes.status.value = JSON.parse(res)
-                    })
-            }
-        },
-
-        {
-            "id": "tv_1",
-            "name": "TV status",
-            "params": "normal",
-			"update": (el) => {
-                sends({
-                        "to": "boiler_1",
-                        "data": `[{ "digitalRead": { "pin": 32 } }]`
-                    },
-                    (res) => {
-                        console.log(el);
-                        el.attributes.status.value = JSON.parse(res)
-                    })
-            }
+            "id": "esp01_relay_2",
+            "name": "Gas Boiler",
+            "params": "big",
+            "type": "button",
+            "device": "esp01_relay",
+            "connect_to": "0"
+            
         },
         
-        {id: "dummy1", name: "Dummy 1", params: "normal" },
-        {id: "dummy1", name: "Dummy 1", params: "big" },
-    ]
+        {
+            "id": "pump_2",
+            "name": "Pump Status",
+            "params": "normal",
+            "type": "stater",
+            "device": "esp01_relay",
+            "connect_to": "0"
+        },
+	]
 }
 ];
 
+let devices = [];
+
+
 const load = () => {
-
-	for (let i = 0; i < rooms.length; i++) {
-		let room = rooms[i];
-		console.log(room.id, room.name);
-		append_section(room.id, room.name);
-
-		for (let c = 0; c < room.devices.length; c++) {
-							// :)
-			let device = room.devices[c];
-			console.log(device.id, device.name);
-			append_card(room.id, device.id, device.name, device.params, null);
-		}
-	}
-
-	post_load();
 	
-	setTimeout(() => update(), 1000);
-	document.addEventListener("click", () => update());
-	setInterval(() => update(), 3500);
+	fetch(location.origin + "/devices", {
+	    method: 'GET',
+	    headers: {
+	        'Accept': 'application/json',
+	        'Content-Type': 'application/json'
+	    }
+	})
+	.then(response => response.json())
+	.then(response => {
+		
+		devices = response;
+
+		for (let i = 0; i < rooms.length; i++) {
+			let room = rooms[i];
+			console.log(room.id, room.name);
+			append_section(room.id, room.name);
+	
+			for (let c = 0; c < room.switches.length; c++) {
+								// :)
+				let device = room.switches[c];
+				console.log(device.id, device.name);
+				append_card(room.id, device.id, device.name, device.params, null);
+			}
+		}
+	
+		post_load();
+		
+		setTimeout(() => update(), 1000);
+		document.addEventListener("click", () => update());
+		setInterval(() => update(), 13500);
+		
+	});
 
 };
 
@@ -198,21 +95,33 @@ const post_load = () => {
 
 	for (let i = 0; i < rooms.length; i++) {
 		let room = rooms[i];
-		for (let c = 0; c < room.devices.length; c++) {
+		for (let c = 0; c < room.switches.length; c++) {
 							// :)
-			let device = room.devices[c];
+			let switch_ = room.switches[c];
 
-			if (device.onclick) {
-				let dev = board.querySelector("card[id=" + device.id  + "");
-				console.log("onclick", device.onclick);
-				dev.onclick = device.onclick;
-				dev.addEventListener("click", device.onclick);
+			if (switch_.type == "button") {
+				let dev = board.querySelector("card[id=" + switch_.id  + "");
+				console.log("onclick", switch_.onclick);
+				//dev.onclick = switch_.onclick;
+				
+				let st = devices.find(el => el.name == switch_.device );
+				let btn = Array.from(st["buttons"]).find(el => el.id == switch_.connect_to);
+				
+				dev.addEventListener("click", () => {
+					dev.attributes.status.value == "on"
+					? 
+					sends({ "to": switch_.device, "data": JSON.stringify(btn.turn_off) },
+                    (res) => dev.attributes.status.value = JSON.parse(res))
+                    :
+                    sends({ "to": switch_.device, "data": JSON.stringify(btn.turn_on) },
+                    (res) => dev.attributes.status.value = JSON.parse(res))
+				});
 			}
-			if (device.onload) {
-				let dev = board.querySelector("card[id=" + device.id  + "");
-				console.log("onload", device.onload);
-				device.onload(dev);
-				dev.addEventListener("click", device.onclick, false);
+			if (switch_.onload) {
+				let dev = board.querySelector("card[id=" + switch_.id  + "");
+				console.log("onload", switch_.onload);
+				switch_.onload(dev);
+				dev.addEventListener("click", switch_.onclick, false);
 			}
 
 		}
@@ -220,19 +129,27 @@ const post_load = () => {
 
 };
 
-const update = () => {
+const update = (what=undefined) => {
 
 	for (let i = 0; i < rooms.length; i++) {
 		let room = rooms[i];
 	//	console.log(room.id, room.name);
 
-		for (let c = 0; c < room.devices.length; c++) {
+		for (let c = 0; c < room.switches.length; c++) {
 							// :)
-			let device = room.devices[c];
-		//	console.log(device.id, device.name);
-			let dev = board.querySelector("card[id=" + device.id  + "");
-			if (device.update) {
-				device.update(dev);
+			let switch_ = room.switches[c];
+			console.log(switch_.id, switch_.name);
+			
+			let dev = board.querySelector("card[id=" + switch_.id  + "");
+			let st = devices.find(el => el.name == switch_.device );
+			if (st) {
+				console.log(st);
+				let btn = Array.from(st["buttons"]).find(el => el.id == switch_.connect_to);
+				console.log(btn);
+				if (btn) {
+ 						sends({ "to": switch_.device, "data": JSON.stringify(btn.status) },
+                    (res) => dev.attributes.status.value = JSON.parse(res))
+				}
 			}
 		}
 	}
@@ -272,6 +189,8 @@ const print_error = (response) => {
 
 
 const sends = (data, cb) => {
+	
+	console.log("______SENDS______", data);
 
 	fetch(location.origin + "", {
 	    method: 'POST',
@@ -284,6 +203,7 @@ const sends = (data, cb) => {
 	.then(response => response.json())
 	.then(response => {
 		var result = JSON.stringify(response);
+		console.log(response);
 		if (response["error"] != undefined) {
 			print_error(response);
 		}

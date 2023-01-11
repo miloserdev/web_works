@@ -148,6 +148,7 @@ cards>card>h1 {
 	position: absolute;
 	top: 15px;
 	left: 15px;
+	word-break: break-word;
 }
 
 cards>card[normal][status="on"] {
