@@ -1,0 +1,16 @@
+{
+  "name": "socketchat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js",
+    "debug": "nodemon index.js"
+  },
+  "author": "Miloserdev",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^2.0.6",
+    "socketio": "^1.0.0"
+  }
+}
