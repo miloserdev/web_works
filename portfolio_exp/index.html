@@ -1,0 +1,327 @@
+<!DOCTYPE HTML>
+<htm lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Miloserdev</title>
+	<link rel="manifest" href="manifest.json">
+	<meta name="theme-color" content="#000000">
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="viewport"
+   	 content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover>
+	<meta http-equiv="Content-Security-Policy" content="default-src *;
+	img-src * 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' *;
+	style-src  'self' 'unsafe-inline' *">
+
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="msapplication-starturl" content="/">
+
+	<link rel="icon" type="image/svg" sizes="420x420" href="./img/favicon.ico">
+	<link rel="apple-touch-icon" type="image/svg" sizes="420x420" href="./img/favicon.ico">
+	<link rel="stylesheet" href="./css/null.css">
+	<link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+	<style>
+	* {
+		box-sizing: border-box;
+		#font-family: 'SF Pro Display';
+		font-family: sans-serif;
+	}
+	body {
+		background-color: black;
+		width: 100%;
+		height: 100%;
+		#max-width: 100vw;
+		#max-height: 100vh;
+		border: none;
+		padding: 0;
+		margin: 0;
+		position: fixed;
+		display: grid;
+	}
+
+	gryd {
+		display: grid;
+		#grid: auto / auto-flow max-content;
+		grid-gap: 10em;
+		padding: 10em;
+
+		grid-template-rows: auto auto auto;
+		grid-template-columns: auto auto auto;
+
+		align-items: center;
+
+		#scroll-snap-points-x: repeat(100vh);
+		#scroll-snap-points-y: repeat(100vw);
+		scroll-snap-type: both mandatory;
+
+		overflow: scroll;
+		scroll-behavior: smooth;
+
+		position: fixed;
+		width: 100vw;
+		height: 100vh;
+	}
+
+	gryd > gitem {
+		background-color: black;
+		display: grid;
+		align-items: center;
+		place-items: center;
+	#	align-content: center;
+	#	justify-content: center;
+		overflow: hidden;
+		overflow: scroll;
+		position: relative;
+		scroll-snap-align: center;
+
+		width: 100vw;
+		height: 100vh;
+	}
+
+	gryd > gitem[center] {
+		grid-row-start: 2;
+		grid-column-start: 2;
+	}
+
+	gryd > gitem > * {
+		#display: flex;
+		#place-self: center;
+		color: lightgrey;
+	}
+
+	p {
+		display: block;
+		word-break: break-all;
+		overflow-wrap: break-word;
+		max-width: 70%;
+	}
+
+	name {
+		display: grid;
+		grid-auto-flow: row;
+		align-items: left;
+		font-size: clamp(20px, 16vw, 100px);
+	}
+
+
+brief {
+	max-width: 50vw;
+	max-height: 50vh;
+}
+
+text {
+	font-size: 2em;
+	word-break:break-all;
+	word-wrap: break-word;
+	white-space:break-spaces;
+}
+
+
+
+
+ gallery {
+	display: grid;
+	grid-gap: 20px;
+	#grid-auto-flow: column;
+	#place-content: center;
+	width: 100%;
+	height: 100%;
+
+	padding: 3em;
+
+#overflow-x: scroll;
+#overflow-y: scroll;
+
+}
+@media (max-width : 520px) {
+	gallery {
+		grid-auto-flow: row;
+	}
+}
+
+gallery > item {
+	position: relative;
+	display: flex;
+	place-content: center;
+	place-items: center;
+	overflow: hidden;
+}
+
+
+gallery > item > hss {
+	#z-index: 2;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	bottom: -100%;
+	/* opacity: 0; */
+	display: grid;
+	grid-gap: 10px;
+	place-content: center;
+	place-items: center;
+	/* background: #00000050; */
+	transition: all 0.58s cubic-bezier(0.4, 0, 0.41, 0.98);
+
+/*	 backdrop-filter: saturate(180%) blur(20px);
+	mask-image: linear-gradient(to bottom, transparent 25%, black 75%);
+	-webkit-mask-image: linear-gradient(to bottom, transparent 25%, black 75%); */
+}
+
+
+gallery > item > hss::after {
+	z-index: -1;
+	content: "";
+	position: absolute;
+	width: 100%;
+	height: 100%;
+
+	backdrop-filter: saturate(180%) blur(20px);
+	mask-image: linear-gradient(to bottom, transparent 25%, black 75%);
+	-webkit-mask-image: linear-gradient(to bottom, transparent 25%, black 75%);
+}
+
+
+gallery > item:hover > hss {
+	bottom: 0%;
+	opacity: 1;
+}
+
+
+gallery > item > hss > * {
+	color: white;
+	filter: drop-shadow(0px 5px 10px black);
+	/* mix-blend-mode: difference; */
+}
+
+
+gallery > item > hss > h1 {
+	font-size: 1.666em;
+}
+
+gallery > item > hss > h2 {
+	font-size: 1.3em;
+	font-family: 'SF Pro Text';
+}
+
+gallery > item > img,
+gallery > item > video,
+gallery > item > object {
+	width: 50em;
+	height: 28em;
+	object-fit:cover;
+	/* margin: 1px; */ /* Заход на 1 пиксель */
+	pointer-events: none;
+}
+
+*[pointer] { position: absolute; letter-spacing: 1em; }
+*[pointer]:hover {
+	filter: drop-shadow(0px 5px 10px #fdfdfd);
+}
+
+	</style>
+
+	<gryd id="gryd" data-layoutmethod="grid" autofocus>
+		<gitem id="main" center>
+			<name>
+				<span>Max</span>
+				<span>Miloserdev</span>
+
+				<h5 style="font-size: 0.3em; display: grid; place-self: center;">use arrows</h5>
+			</name>
+
+			<a pointer="" href="#3" style="top: 5em;transform: rotate(0deg)">about</a>
+			<a pointer="" href="#5" style="left: 5em;transform: rotate(-90deg);">left</a>
+			<a pointer="" href="#6" style="right: 5em;transform: rotate(90deg);">right</a>
+			<a pointer="" href="#8" style="bottom: 5em;transform: rotate(0deg)">works</a>
+
+		</gitem>
+
+		<gitem id="2">
+
+			<h1>2</h1>
+
+			<a pointer="" href="#3" style="right: 5em;transform: rotate(90deg);">about</a>
+			<a pointer="" href="#5" style="bottom: 5em;transform: rotate(0deg);">5</a>
+			<a pointer="" href="#main" style="right: 5em; bottom: 5em;transform: rotate(-45deg)">main</a>
+
+			<a pointer href="#8">8</a>
+				<brief>
+				<text>Reason philosophy transvaluation madness battle overcome. Grandeur right depths zarathustra contradict contradict. Self justice superiority dead convictions against pious spirit law deceptions aversion christianity. War ascetic passion eternal-return merciful against ultimate chaos ultimate burying superiority zarathustra pious enlightenment.</text>
+				</brief>
+			</p>
+		</gitem>
+		<gitem id="3">
+
+			<h1>3</h1>
+
+			<a pointer="" href="#4" style="right: 5em;transform: rotate(90deg);">right</a>
+			<a pointer="" href="#main" style="right: 5em; bottom: 5em;transform: rotate(-45deg)">main</a>
+
+
+			<a pointer href="#7">7</a>
+			<a pointer="" href="#main" style="bottom: 5em;">main</a>
+		</gitem>
+		<gitem id="4">
+
+		<h1>4</h1>
+
+			<a pointer="" href="#main" style="left: 5em;bottom:5em;transform: rotate(45deg)">main</a>
+			<a pointer="" href="#3" style="left: 5em;transform: rotate(-90deg);">left</a>
+			<a pointer="" href="#6" style="bottom: 5em;transform: rotate(0deg)">6</a>
+
+		</gitem>
+		<gitem id="5"> <h1>5</h1> <a pointer href="#9">9</a>  </gitem>
+		<gitem id="6"> <h1>6</h1> <a pointer href="#4">4</a>  </gitem>
+		<gitem id="7"> <h1>7</h1> <a pointer href="#3">3</a>  </gitem>
+		<gitem id="8"> <h1>8</h1> <a pointer href="#2">2</a>
+			<a pointer="" href="#main" style="top: 5em;">main</a>
+
+	<gallery>
+          <item>
+            <hss>
+              <h1>Project 1</h1>
+              <h2>project type</h2>
+            </hss>
+            <object type="image/jpg" data="https://picsum.photos/500/600"></object>
+          </item>
+          <item>
+            <hss>
+              <h1>Project 2</h1>
+              <h2>project type</h2>
+            </hss>
+            <video autoplay="" muted="" loop="" playsinline="" preload="metadata" src="./images/pexels-cottonbro-5473977.mp4"></video>
+            <!-- <object autoplay muted loop playsinline preload="metadata" type="video/mp4" data="./img/pexels-cottonbro-5473977.mp4"></object> -->
+            <!-- <img src=""> -->
+          </item>
+          <item>
+            <hss>
+              <h1>Project 3</h1>
+              <h2>project type</h2>
+            </hss>
+            <object type="image/jpg" data="https://picsum.photos/501/601"></object>
+          </item>
+        </gallery>
+		</gitem>
+		<gitem id="9"> <h1>9</h1> <a href="#1">1</a>  </gitem>
+	</gryd>
+
+	<script>
+		window.location = '#main';
+		document.getElementById("gryd").focus();
+window.onload = function() {
+  document.getElementById("gryd").focus();
+};
+window.onkeypress = function() {
+	alert("zaebis");
+  document.getElementById("gryd").focus();
+};
+
+addEventListener('keydown', (event) => { document.getElementById("gryd").focus(); });
+
+	</script>
+</body>
