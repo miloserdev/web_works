@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Floating 3D Card</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+    <div class="card">
+        <div class="layers">
+            
+            <canvas class="layer" id="canvas1" width="512" height="380"></canvas>
+		<img width="280" height="600" src="https://picsum.photos/1000/700"/>
+            <canvas class="layer" id="canvas2" width="512" height="380" style="transform: translateZ(20px); background: linear-gradient(135deg, rgba(255,255,255,.25) 0%,rgba(255,255,255,0) 60%); "></canvas>
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    
+    <script src="js/script.js"></script>
+</body>
+</html>
