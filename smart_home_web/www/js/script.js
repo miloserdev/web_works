@@ -1,196 +1,78 @@
-const board = document.querySelector("board");
-const handler = document.querySelector("handler");
+let scenes_data;
+let rooms_data;
+let devices_data;
 
-const rooms = [{
-    "id": "boiler_room",
-    "name": "Boiler Room",
-    "switches": [
-        {
-            "id": "esp01_relay",
-            "name": "Gas Boiler",
-            "params": "big",
-            "type": "button",
-            "device": "esp01_relay",
-            "connect_to": "0"
-            
-        },
-        
-        {
-            "id": "pump_1",
-            "name": "Pump Status",
-            "params": "normal",
-            "type": "stater",
-            "device": "esp01_relay",
-            "connect_to": "0"
-        },
-	]
-},
-{
-    "id": "boiler_room_2",
-    "name": "Boiler Room",
-    "switches": [
-        {
-            "id": "esp01_relay_2",
-            "name": "Gas Boiler",
-            "params": "big",
-            "type": "button",
-            "device": "esp01_relay",
-            "connect_to": "0"
-            
-        },
-        
-        {
-            "id": "pump_2",
-            "name": "Pump Status",
-            "params": "normal",
-            "type": "stater",
-            "device": "esp01_relay",
-            "connect_to": "0"
-        },
-	]
-}
-];
+let room_title = document.getElementById("room_title");
+let scene_title = document.getElementById("scene_title");
+let cards = document.querySelector("cards[id='cards']");
+let automations_holder = document.querySelector('list_holder[id="automations"]');
+let scenes_holder = document.querySelector('linear_scroller[id="scenes"]');
+let rooms_holder = document.querySelector('list_holder[id="rooms"]');
 
-let devices = [];
+let current_room;
 
 
-const load = () => {
-	
-	fetch(location.origin + "/devices", {
-	    method: 'GET',
-	    headers: {
-	        'Accept': 'application/json',
-	        'Content-Type': 'application/json'
-	    }
+const update = () => {
+	rooms_data.find(i => i.id == current_room).elements.forEach(el => {
+		let dev = devices_data.find(f => f.name == el.to);
+		
+		console.log("id", el.id)
+		
+		let rm = cards.querySelector(`card[id="${el.id}"]`);
+		console.log(rm)
+		
+		let asd = dev.buttons.find(a => a.id == el.button).status;
+		asd = JSON.stringify(asd);
+		console.log(asd);
+		
+		sends( {"to": el.to, "data": `${asd}` }, e => {
+			console.log(e);
+			rm.attributes.status.value = JSON.parse(e);
+		} );
 	})
-	.then(response => response.json())
-	.then(response => {
-		
-		devices = response;
+}
 
-		for (let i = 0; i < rooms.length; i++) {
-			let room = rooms[i];
-			console.log(room.id, room.name);
-			append_section(room.id, room.name);
+
+
+
+var post_load = (datas) => {
+
+	let scenes = datas["scenes"];
 	
-			for (let c = 0; c < room.switches.length; c++) {
-								// :)
-				let device = room.switches[c];
-				console.log(device.id, device.name);
-				append_card(room.id, device.id, device.name, device.params, null);
-			}
-		}
-	
-		post_load();
+	scenes.forEach((item) => {
+		let icons = item["icons"]
+		.map(e => `<i class="${e}"></i>` ).join('');
 		
-		setTimeout(() => update(), 1000);
-		document.addEventListener("click", () => update());
-		setInterval(() => update(), 13500);
-		
+		scenes_holder.innerHTML +=
+		`<scene_holder>
+			<scene_push>
+				<a button ${item["button"]}>
+					${icons}
+				</a>
+			</scene_push>
+			<h4>${item.name}</h4>
+		</scene_holder>`;
 	});
+	
+	let rooms = datas["rooms"];
 
 };
 
-const post_load = () => {
-
-	for (let i = 0; i < rooms.length; i++) {
-		let room = rooms[i];
-		for (let c = 0; c < room.switches.length; c++) {
-							// :)
-			let switch_ = room.switches[c];
-
-			if (switch_.type == "button") {
-				let dev = board.querySelector("card[id=" + switch_.id  + "");
-				console.log("onclick", switch_.onclick);
-				//dev.onclick = switch_.onclick;
-				
-				let st = devices.find(el => el.name == switch_.device );
-				let btn = Array.from(st["buttons"]).find(el => el.id == switch_.connect_to);
-				
-				dev.addEventListener("click", () => {
-					dev.attributes.status.value == "on"
-					? 
-					sends({ "to": switch_.device, "data": JSON.stringify(btn.turn_off) },
-                    (res) => dev.attributes.status.value = JSON.parse(res))
-                    :
-                    sends({ "to": switch_.device, "data": JSON.stringify(btn.turn_on) },
-                    (res) => dev.attributes.status.value = JSON.parse(res))
-				});
-			}
-			if (switch_.onload) {
-				let dev = board.querySelector("card[id=" + switch_.id  + "");
-				console.log("onload", switch_.onload);
-				switch_.onload(dev);
-				dev.addEventListener("click", switch_.onclick, false);
-			}
-
-		}
-	}
-
-};
-
-const update = (what=undefined) => {
-
-	for (let i = 0; i < rooms.length; i++) {
-		let room = rooms[i];
-	//	console.log(room.id, room.name);
-
-		for (let c = 0; c < room.switches.length; c++) {
-							// :)
-			let switch_ = room.switches[c];
-			console.log(switch_.id, switch_.name);
-			
-			let dev = board.querySelector("card[id=" + switch_.id  + "");
-			let st = devices.find(el => el.name == switch_.device );
-			if (st) {
-				console.log(st);
-				let btn = Array.from(st["buttons"]).find(el => el.id == switch_.connect_to);
-				console.log(btn);
-				if (btn) {
- 						sends({ "to": switch_.device, "data": JSON.stringify(btn.status) },
-                    (res) => dev.attributes.status.value = JSON.parse(res))
-				}
-			}
-		}
-	}
-
-};
-
-
-function append_card(section_id, device_id, name, params, onclick) {
-
-	let section = board.querySelector("section[id=" + section_id +"]");
-	let cards = section.querySelector("cards");
-
-	cards.innerHTML += `<card id="${device_id}" ${params} status="">
-				<h1>${name}</h1>
-			</card>`;
-}
-
-
-function append_section (id, name) {
-
-	board.innerHTML += `<section id="${id}">
-				<h1>${name}</h1>
-		                <cards>
-		                
-		                </cards>
-		        </section>`;
-
-}
 
 const print_error = (response) => {
 	let errs = response["error"]["cause"];
+	if (errs) {
 	handler.innerHTML = `<a>code: ${errs.code}</a>
 						<a>errno: ${errs.errno}</a>
 						<a>syscall: ${errs.syscall}</a>`;
 	setTimeout(() => handler.innerHTML = "", 10000);
+	}
 }
 
 
 const sends = (data, cb) => {
 	
-	console.log("______SENDS______", data);
+	console.log(data);
 
 	fetch(location.origin + "", {
 	    method: 'POST',
@@ -203,13 +85,210 @@ const sends = (data, cb) => {
 	.then(response => response.json())
 	.then(response => {
 		var result = JSON.stringify(response);
-		console.log(response);
 		if (response["error"] != undefined) {
-			print_error(response);
+		//	print_error(response);
 		}
-		if (cb) console.log(cb); cb(result);
+		if (cb) /*console.log(cb);*/ cb(result);
 	});
 };
 
 
-addEventListener("DOMContentLoaded", load);
+const set_room = (room_id) => {
+	
+	sends({"to": "root", "get_room": room_id}, (item) => {
+		
+		item = JSON.parse(item);
+		console.log(item);
+	
+	current_room = item.id;
+	
+	cards.innerHTML = "";
+	room_title.innerText = item.name;
+	let scen = scenes_data.find(i => i.id == item.scene);
+	scen = scen ? scen.name : "None";
+	scene_title.innerText = `Scene: ${ scen }`;
+				
+	/*
+				let s = document.getElementById(item.scene).querySelector("a[button]");
+				
+				 if (s.classList.contains("active")) {
+			    	s.classList.remove("active");
+			  	} else s.classList.add("active");
+				*/
+				
+	item.elements.forEach(el => {
+		let d = devices_data.find(f => f.name == el.to);
+		console.log(`set button ${el.id} > ${el.button} to ${d.name}`);
+			cards.innerHTML += `
+			<card id="${el.id}"
+				normal="" status="off">
+				<h1>${el.id}</h1>
+			</card>`;
+	});
+
+	item.elements.forEach(el => {
+		let d = devices_data.find(f => f.name == el.to);
+		let els = cards.querySelector(`card[id="${el.id}"]`);
+		els.onclick = (e) => {
+			console.log(`push button ${el.id} > ${el.button} of ${d.name}`);
+			
+			let asd = d.buttons.find(a => a.id == el.button);
+			asd = els.attributes.status.value == "on" ? asd.turn_off : asd.turn_on;
+			asd = JSON.stringify(asd);
+			console.log("types", asd);
+			
+			sends( {"to": el.to, "data": `${asd}` }, e => {
+				console.log(e);
+				els.attributes.status.value = JSON.parse(e);
+			} );
+		}	
+	});
+	
+	});
+}
+
+
+
+document.addEventListener("DOMContentLoaded", async (e) => {
+
+	$("#slider2").roundSlider({
+	    sliderType: "min-range",
+	    circleShape: "pie",
+	    startAngle: "315",
+	    lineCap: "round",
+	    radius: 130,
+	    width: 10,
+	    min: 0,
+	    max: 30,
+	    svgMode: true,
+		pathColor: "#292929",
+		rangeColor: "#0071e3",
+		tooltipColor: "#0071e3",
+		borderWidth: 0,
+		//startValue: 0,
+	    valueChange: function (e) {
+	    }
+	});
+	
+	var sliderObj = $("#slider2").data("roundSlider");
+	sliderObj.setValue(10);
+
+	
+	await fetch("http://192.168.1.66:8091/get_devices", {
+	    "credentials": "omit",
+	    "headers": {
+	        "Sec-Fetch-Dest": "script",
+	    },
+	    "method": "GET",
+	    "mode": "cors"
+	})
+	.then(resp => resp.json())
+	.then(devices => devices_data = devices).then(r => console.log("fff", r));
+	
+	await fetch("http://192.168.1.66:8091/get_automations", {
+	    "credentials": "omit",
+	    "headers": {
+	        "Sec-Fetch-Dest": "script",
+	    },
+	    "method": "GET",
+	    "mode": "cors"
+	})
+	.then(resp => resp.json())
+	.then(automations => {
+		
+		automations_data = automations;
+		console.log("automations", automations);
+
+		automations.forEach((item) => {
+			console.log("auto", item);
+			let icons = item["icons"];
+			if (icons) icons = icons.map(e => `<i class="${e}"></i>` ).join('');
+			
+			automations_holder.innerHTML +=
+			`<round_holder flat id="${item.id}">
+				<round_push flat>
+					<a button ${item["button"]}>
+						${item.name}
+					</a>
+					<h4>${item.for}</h4><h4 style="color: #6c757d">${item.trigger}</h4>
+				</round_push>
+			</round_holder>`;
+		});
+	});
+	
+	
+	await fetch("http://192.168.1.66:8091/get_scenes", {
+	    "credentials": "omit",
+	    "headers": {
+	        "Sec-Fetch-Dest": "script",
+	    },
+	    "method": "GET",
+	    "mode": "cors"
+	})
+	.then(resp => resp.json())
+	//.then(data => JSON.parse(data))
+	.then(scenes => {
+		scenes_data = scenes;
+		console.log("scenes", scenes);
+		scenes.forEach((item) => {
+			let icons = item["icons"]
+			.map(e => `<i class="${e}"></i>` ).join('');
+			
+			scenes_holder.innerHTML +=
+			`<round_holder id="${item.id}">
+				<round_push>
+					<a button ${item["button"]}>
+						${icons}
+					</a>
+				</round_push>
+				<h4>${item.name}</h4>
+			</round_holder>`;
+		});
+		
+		scenes.forEach((item) => {
+			console.log(item);
+			let s = document.getElementById(item.id);
+			s.onclick = (e) => {
+				scene_title.innerText = `Scene: ${item.name}`;
+				sends( {"set_scene": {"room_id": current_room, "scene": item.id } },
+				 e => console.log(e) );
+			}
+		})
+	});
+	
+	await fetch("http://192.168.1.66:8091/get_rooms", {
+	    "credentials": "omit",
+	    "headers": {
+	        "Sec-Fetch-Dest": "script",
+	    },
+	    "method": "GET",
+	    "mode": "cors"
+	})
+	.then(resp => resp.json())
+	.then(rooms => {
+		rooms_data = rooms;
+	
+		rooms.forEach((item) => {
+			let icons =
+			item["icons"].map(e => `<i class="${e}"></i>` ).join('');
+			
+			rooms_holder.innerHTML +=
+			`<a button etc id="${item.id}">
+				${icons}
+			</i>${item.name}</a>`;
+		});
+		
+		current_room = rooms[0].id;
+		set_room(current_room);
+		
+		rooms.forEach((item) => {
+			let t = document.getElementById(item.id);
+			t.onclick = (e) => set_room(item.id);
+			
+		});
+	});
+	
+	//setInterval(update, 5000);
+
+	console.log("DOMContentLoaded");
+});

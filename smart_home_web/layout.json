@@ -1,0 +1,6 @@
+[{
+    "id": "boiler_room",
+    "name": "Boiler Room",
+    "devices": ["relay_array_1"]
+}
+]

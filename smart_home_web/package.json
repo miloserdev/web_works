@@ -4,11 +4,13 @@
   "description": "Smart Home Application",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon --experimental-fetch index.js"
+    "test": "nodemon --ignore ./data --experimental-fetch index.js"
   },
   "author": "Miloserdev",
   "license": "GPL-3.0",
   "dependencies": {
-    "node-fetch": "^3.3.0"
+    "lowdb": "^5.0.5",
+    "node-fetch": "^3.3.0",
+    "tinydb": "^0.1.0"
   }
 }
