@@ -147,6 +147,7 @@ const set_room = (room_id) => {
 	});
 }
 
+
 const save_automation = (item_id) => {
 	let item_name = document.getElementById(`card_auto_${item_id}_name`).value;
 	let item_for = document.getElementById(`card_auto_${item_id}_for`).value;
@@ -177,6 +178,8 @@ const open_automation = (item_id) => {
 	cards.innerHTML = "";
 	room_title.innerText = item.name;
 	scene_title.innerText = `Automation Setup`;
+	
+	console.log(item.command)
 
 
 	cards.innerHTML += `
@@ -201,7 +204,7 @@ const open_automation = (item_id) => {
 		
 		<input_box>
 		<label for="card_auto_${item.id}_command">Command</label>
-		<input type="text" id="card_auto_${item.id}_command" value="${item.command || null}"><br>
+		<input type="text" id="card_auto_${item.id}_command" value="${ new String(item.command[0]) || null}"><br>
 		</input_box>
 		
 		<input type="submit" value="Save" onclick="event.preventDefault(); save_automation('${item_id}');">

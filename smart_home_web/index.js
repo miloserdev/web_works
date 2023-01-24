@@ -110,6 +110,8 @@ const process = async (req, res, data) => {
 	
 	console.log("process");
 	
+	let ret;
+	
 	try {
 	
 	console.log(data);
@@ -134,9 +136,7 @@ const process = async (req, res, data) => {
 			}
 			
 			resp = await set_automation(item_id, name_, for_, trigger_, command_);
-			res.setHeader('Content-Type', 'application/json');
-			res.end( JSON.stringify(resp) );
-			return;
+			return resp;
 		}
 		
 		if (data.set_scene) {
@@ -159,9 +159,7 @@ const process = async (req, res, data) => {
 			if ( !resp) {
 				resp = { "error": "no rooms found" };
 			}
-			res.setHeader('Content-Type', 'application/json');
-			res.end( JSON.stringify(resp) );
-			return;
+			return resp;
 		}
 				
 		else if (data.get_room) {
@@ -173,9 +171,7 @@ const process = async (req, res, data) => {
 			
 			resp = await get_room_by_id(room_id);
 			console.log("room", resp);
-			res.setHeader('Content-Type', 'application/json');
-			res.end( JSON.stringify(resp) );
-			return;
+			return resp;
 		}
 				
 		else if (data.get_automation) {
@@ -187,9 +183,7 @@ const process = async (req, res, data) => {
 			
 			resp = await get_automation_by_id(item_id);
 			console.log("room", resp);
-			res.setHeader('Content-Type', 'application/json');
-			res.end( JSON.stringify(resp) );
-			return;
+			return resp;
 		}
 		
 	} else {
@@ -224,13 +218,11 @@ const process = async (req, res, data) => {
 			
 			exec_event(ev);
 			
-			res.setHeader('Content-Type', 'application/json');
-			res.end( JSON.stringify(body) );
+			return body;
 			
 		} catch (e) {
 			//console.log(e);
-			res.setHeader('Content-Type', 'application/json');
-			res.end( JSON.stringify("unknown") );
+			return "unknown";
 			//res.end( JSON.stringify( {"error": e} ) );
 		}
 	
@@ -243,6 +235,8 @@ const process = async (req, res, data) => {
 	} catch (e) {
 		console.log( c.col_err("at parser "), e);
 	}
+	
+	return "i don't know"
 
 }
 
@@ -320,7 +314,9 @@ const post_listener = async (req, res, query) => {
 			try {
 				var POST = qs.parse(body);
 				var obj = JSON.parse(body);
-				await process(req, res, obj);
+				
+				res.setHeader('Content-Type', 'application/json');
+				res.end( JSON.stringify(await process(req, res, obj)) );
 			} catch (e) {
 				console.log( c.col_err("at req.on(end) "), e);
 			}
@@ -346,6 +342,16 @@ const requestListener = async (req, res) => {
 
 
 
+function normaltime (time) {
+	let now = new Date(Date.now());
+	let h = now.getHours()
+	let m = now.getMinutes();
+	let s = now.getSeconds();
+	return `${h >= 10 ? h : "0" + h }:${m >= 10 ? m : "0" + m}:${s >= 10 ? s : "0" + s}`
+	return now;
+}
+
+
 (main = async () => {
 	try {
 		
@@ -359,35 +365,80 @@ const requestListener = async (req, res) => {
 		// const asd = require("./data.json");
 	
 		db_automations = new TinyDB("./data/automations.json");
-		db_automations.onReady  = () => {
+		db_automations.onReady  = () =>
+		{
 			console.log("db_automations is ready");
 			console.log(
-				set_automation("second", "Activity Simulation", "root", null, "LOG 1" )
+				set_automation("second", "Activity Simulation", "root", null, "LOG 1" ),
+				set_automation("boiler_on", "Boiler turn on", "root", "time=20:10", { to: "esp01_relay", data: "[{\"relay\":0}]" } ),
+				set_automation("boiler_off", "Boiler turn off", "root", "time=6:10", { to: "esp01_relay", data: "[{\"relay\":1}]" } ),
 			)
+			
+			db_automations._data["data"].forEach(el => el.executed = false);
+			db_automations.flush();
 		}
 		
 		db_scenes = new TinyDB("./data/scenes.json");
-		db_scenes.onReady  = () => {
+		db_scenes.onReady  = () =>
+		{
 			console.log("db_scenes is ready");
 		}
 
 		db_rooms = new TinyDB("./data/rooms.json");
-		db_rooms.onReady  = () => {
+		db_rooms.onReady  = () =>
+		{
 			console.log("db_rooms is ready");
 		}
 
 		db_devices = new TinyDB("./data/devices.json");
-		db_devices.onReady  = () => {
+		db_devices.onReady  = () =>
+		{
 			console.log("db_events is ready");
 		}
+		
+		setInterval(async () => {
+			//check for updates;
+			
+			let autos = db_automations._data["data"].forEach((el) =>
+			{
+				
+				if ( el?.trigger?.startsWith("time") )
+				{
+					let now = normaltime();
+					let time = el.trigger.split("time=")[1];
+					
+					console.log(time, normaltime());
+					
+					if (el.executed) return;
+					
+					if ( now.startsWith(time) || el.exec_after_timeout )
+					{
+						el.executed = true;
+						db_automations.flush();
+						
+						setTimeout(async () =>
+						{
+							el.executed = false;
+							db_automations.flush();
+						}, 120000 );
+						
+						process(null, null, el.command).then(e => console.log("e", e) )
+						
+					}
+				}
+			});
+			
+		}, 1000);
 		
 		//setTimeout(() => change_scene("room_2", "asd"), 1000);
 		
 		const server = http.createServer(requestListener);
-		server.listen(port, host, () => {
+		server.listen(port, host, () =>
+		{
 			console.log(`Server is running on http://${host}:${port}`);
 		});
-	} catch (e) {
+	} catch (e)
+	{
 		console.log( c.col_err("error occured\n"), e);
 		setTimeout(() => main(), 1000);
 	}

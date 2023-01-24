@@ -34,4 +34,8 @@ function unixtime (date = Date.now()) {
   return Math.floor(date / 1000)
 }
 
+function normaltime (time) {
+	return null;
+}
+
 module.exports = { M_Event, Room, Device, unixtime };
