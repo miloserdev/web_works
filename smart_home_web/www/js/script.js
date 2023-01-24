@@ -147,6 +147,71 @@ const set_room = (room_id) => {
 	});
 }
 
+const save_automation = (item_id) => {
+	let item_name = document.getElementById(`card_auto_${item_id}_name`).value;
+	let item_for = document.getElementById(`card_auto_${item_id}_for`).value;
+	let item_trigger = document.getElementById(`card_auto_${item_id}_trigger`).value;
+	let item_command = document.getElementById(`card_auto_${item_id}_command`).value;
+	
+	console.log(item_id, item_name, item_for, item_trigger, item_command);
+	
+	sends({"to": "root", "set_automation": 
+											{ 
+												id: item_id, 
+												name: item_name,
+												for: item_for, 
+												trigger: item_trigger, 
+												command: item_command 
+											} 
+		}, (item) => {
+			console.log(item);
+		});
+}
+
+const open_automation = (item_id) => {
+	sends({"to": "root", "get_automation": item_id}, (item) => {
+		
+		item = JSON.parse(item);
+		console.log(item);
+		
+	cards.innerHTML = "";
+	room_title.innerText = item.name;
+	scene_title.innerText = `Automation Setup`;
+
+
+	cards.innerHTML += `
+	<block id="card_auto_${item.id}" style="width: fit-content; height: fit-content;" large>
+		<h1>${item.id}</h1>
+		<formd style="display: grid;" id="card_auto_${item.id}_form" onsubmit="event.preventDefault(); save_automation('${item_id}');">
+		
+		<input_box>
+		<label for="card_auto_${item.id}_name">Name</label>
+		<input type="text" id="card_auto_${item.id}_name" value="${item.name || null}"><br>
+		</input_box>
+		
+		<input_box>
+		<label for="card_auto_${item.id}_for">For</label>
+		<input type="text" id="card_auto_${item.id}_for" value="${item.for || null}"><br>
+		</input_box>
+		
+		<input_box>
+		<label for="card_auto_${item.id}_trigger">Trigger</label>
+		<input type="text" id="card_auto_${item.id}_trigger" value="${item.trigger || null}"><br>
+		</input_box>
+		
+		<input_box>
+		<label for="card_auto_${item.id}_command">Command</label>
+		<input type="text" id="card_auto_${item.id}_command" value="${item.command || null}"><br>
+		</input_box>
+		
+		<input type="submit" value="Save" onclick="event.preventDefault(); save_automation('${item_id}');">
+		
+		</formd>
+	</block>`;
+			
+	});
+}
+
 
 
 document.addEventListener("DOMContentLoaded", async (e) => {
@@ -205,7 +270,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 			if (icons) icons = icons.map(e => `<i class="${e}"></i>` ).join('');
 			
 			automations_holder.innerHTML +=
-			`<round_holder flat id="${item.id}">
+			`<round_holder flat id="automation_${item.id}">
 				<round_push flat>
 					<a button ${item["button"]}>
 						${item.name}
@@ -213,6 +278,12 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 					<h4>${item.for}</h4><h4 style="color: #6c757d">${item.trigger}</h4>
 				</round_push>
 			</round_holder>`;
+		});
+		
+		automations.forEach((item) => {
+			let t = document.getElementById("automation_" + item.id);
+			t.onclick = (e) => open_automation(item.id);
+			
 		});
 	});
 	

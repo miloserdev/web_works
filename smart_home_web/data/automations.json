@@ -1,1 +1,1 @@
-{"data":[{"id":"main","for":"root","trigger":"esp01_relay","command":"LOG 1","_id":"10005c45-7dbe-4577-9996-3689d235f94e"},{"id":"second","name":"Activity Simulation","for":"root","trigger":null,"command":"LOG 1","_id":"275b05aa-2e87-4968-b4d8-3d113644226b"}]}
+{"data":[{"id":"main","for":"root","trigger":"esp01_relay","command":"LOG 1","_id":"10005c45-7dbe-4577-9996-3689d235f94e","name":"Update"},{"id":"second","name":"Activity Simulation","for":"root","trigger":"root","command":"LOG 1","_id":"275b05aa-2e87-4968-b4d8-3d113644226b"}]}

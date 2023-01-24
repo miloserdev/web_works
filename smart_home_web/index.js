@@ -30,6 +30,11 @@ const set_scene = async (room_id, scene) => {
 
 
 const get_automations = async () => db_automations._data["data"];
+
+const get_automation_by_id = async (item_id) =>
+	db_automations.find({id: item_id}, async (err, item) =>
+		!err ? item[0] : {"error": err} );
+
 const set_automation = async (item_id, item_name, for_device, trigger, command) => {
 	let ret;
 	let item = db_automations._data["data"].find((el) => el.id == item_id);
@@ -46,10 +51,10 @@ const set_automation = async (item_id, item_name, for_device, trigger, command) 
 		);
 		ret = { "response": "OK", "misc": "not_exist_set" };
 	} else {
-		item.name = item_name;
-		item.for = for_device;
-		item.trigger = trigger;
-		item.command = command;
+		item.name = item_name || item.name;
+		item.for = for_device || item.for;
+		item.trigger = trigger || item.trigger;
+		item.command = command || item.command;
 		ret = { "response": "OK", "misc": "exist_set" }; 
 	}
 	db_automations.flush();
@@ -96,7 +101,7 @@ const exec_event = (data) => {
 	
 	get_automations().then(autos => {
 		let a = autos.filter(el => el.trigger == data.from);
-		console.log("eventing", a);
+		a.forEach(a => console.log("eventing", a.command) );
 	});
 }
 
@@ -115,6 +120,24 @@ const process = async (req, res, data) => {
 		ev.to = "root";
 		
 		let data_ = !data.data ? data : data.data;
+		
+		if (data.set_automation) {
+			let resp;
+			let item_id = data.set_automation.id;
+			let name_ = data.set_automation.name;
+			let for_ = data.set_automation.for;
+			let trigger_ = data.set_automation.trigger;
+			let command_ = data.set_automation.command;
+			
+			if ( !item_id || !name_ || !for_ || !trigger_ || !command_) {
+				resp = { "error": "no item_name || item_id || for_ || trigger_ || command_ parameter" };
+			}
+			
+			resp = await set_automation(item_id, name_, for_, trigger_, command_);
+			res.setHeader('Content-Type', 'application/json');
+			res.end( JSON.stringify(resp) );
+			return;
+		}
 		
 		if (data.set_scene) {
 			let resp;
@@ -149,6 +172,20 @@ const process = async (req, res, data) => {
 			}
 			
 			resp = await get_room_by_id(room_id);
+			console.log("room", resp);
+			res.setHeader('Content-Type', 'application/json');
+			res.end( JSON.stringify(resp) );
+			return;
+		}
+				
+		else if (data.get_automation) {
+			let resp;
+			let item_id = data.get_automation;
+			if ( !item_id) {
+				resp = { "error": "no item_id parameter" };
+			}
+			
+			resp = await get_automation_by_id(item_id);
 			console.log("room", resp);
 			res.setHeader('Content-Type', 'application/json');
 			res.end( JSON.stringify(resp) );

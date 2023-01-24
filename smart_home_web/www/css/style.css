@@ -297,6 +297,8 @@ border: 3px solid #292929;
 background: #171717;
 position: relative;
 filter: drop-shadow(10px 10px 10px #d0d0d020);
+
+padding-top: 35px;
 }
 
 card[big] {
@@ -514,6 +516,24 @@ form[search] > input {
 form[search] > i {
 	font-size: 1em !important;
 	font-weight: 500 !important;
+}
+
+input[type="text"] {
+background: #292929;
+outline: none;
+border: none;
+#border-bottom: 2px solid #006ad5;
+color: #666e76;
+#font-size: 1.1em;
+border-radius: 8px;
+padding: 6px;
+color: #949494;
+}
+
+input_box {
+  display: grid;
+  grid-gap: 5px;
+  padding: 10px;
 }
 
 
