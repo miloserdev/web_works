@@ -413,8 +413,8 @@ function normaltime (time) {
 					
 					if ( now.startsWith(time) || el.exec_after_timeout )
 					{
-						//el.executed = true;
-						//db_automations.flush();
+						el.executed = true;
+						db_automations.flush();
 						
 						setTimeout(async () =>
 						{
