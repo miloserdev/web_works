@@ -1,3 +1,5 @@
+var origin = "192.168.1.69:8091";
+
 let scenes_data;
 let rooms_data;
 let devices_data;
@@ -204,7 +206,7 @@ const open_automation = (item_id) => {
 		
 		<input_box>
 		<label for="card_auto_${item.id}_command">Command</label>
-		<input type="text" id="card_auto_${item.id}_command" value="${ new String(item.command[0]) || null}"><br>
+		<input type="text" id="card_auto_${item.id}_command" value="${ new String(item.command) || null}"><br>
 		</input_box>
 		
 		<input type="submit" value="Save" onclick="event.preventDefault(); save_automation('${item_id}');">
@@ -242,7 +244,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 	sliderObj.setValue(10);
 
 	
-	await fetch("http://192.168.1.66:8091/get_devices", {
+	await fetch("http://" + origin + "/get_devices", {
 	    "credentials": "omit",
 	    "headers": {
 	        "Sec-Fetch-Dest": "script",
@@ -253,7 +255,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 	.then(resp => resp.json())
 	.then(devices => devices_data = devices).then(r => console.log("fff", r));
 	
-	await fetch("http://192.168.1.66:8091/get_automations", {
+	await fetch("http://" + origin + "/get_automations", {
 	    "credentials": "omit",
 	    "headers": {
 	        "Sec-Fetch-Dest": "script",
@@ -291,7 +293,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 	});
 	
 	
-	await fetch("http://192.168.1.66:8091/get_scenes", {
+	await fetch("http://" + origin + "/get_scenes", {
 	    "credentials": "omit",
 	    "headers": {
 	        "Sec-Fetch-Dest": "script",
@@ -330,7 +332,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 		})
 	});
 	
-	await fetch("http://192.168.1.66:8091/get_rooms", {
+	await fetch("http://" + origin + "/get_rooms", {
 	    "credentials": "omit",
 	    "headers": {
 	        "Sec-Fetch-Dest": "script",

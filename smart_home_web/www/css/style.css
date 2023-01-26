@@ -111,13 +111,15 @@ border-radius: 100px;
 border: 1px solid #292929;
 # background: radial-gradient(circle, #0d0d0d 0%, #0d0d0d 60%, #fff0 60%);
 padding: 6px;
+#background: linear-gradient(150deg, rgba(0,0,0,0) 0%, rgba(255,255,255,0.3) 100%);
 }
 
 round_push > a[button] {
 	border-radius: 100px;
 	min-width: 65px;
 	min-height: 65px;
-	background: #0d0d0d !important;
+	#background: #0d0d0d !important;
+	background: linear-gradient(150deg, #272727 10%, #0d0d0d 90%) !important;
 }
 
 round_push[flat] > a[button] {

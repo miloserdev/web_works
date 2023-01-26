@@ -16,7 +16,7 @@ var db_devices;
 
 const devices = require("./devices.json");
 
-const host = "192.168.1.66";
+const host = "192.168.1.69";
 const port = "8091";
 
 
@@ -407,14 +407,14 @@ function normaltime (time) {
 					let now = normaltime();
 					let time = el.trigger.split("time=")[1];
 					
-					console.log(time, normaltime());
+					//console.log(time, normaltime());
 					
 					if (el.executed) return;
 					
 					if ( now.startsWith(time) || el.exec_after_timeout )
 					{
-						el.executed = true;
-						db_automations.flush();
+						//el.executed = true;
+						//db_automations.flush();
 						
 						setTimeout(async () =>
 						{
@@ -422,7 +422,14 @@ function normaltime (time) {
 							db_automations.flush();
 						}, 120000 );
 						
-						process(null, null, el.command).then(e => console.log("e", e) )
+						let devs = get_device_by_name(el.for);
+						if (devs != -1) {
+							
+							process(null, null, {
+								to: el.for,
+								data: JSON.stringify( devs.buttons[0][el.command] )
+							});
+						}
 						
 					}
 				}
