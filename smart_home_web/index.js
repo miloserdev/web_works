@@ -14,7 +14,7 @@ var db_scenes;
 var db_rooms;
 var db_devices;
 
-const devices = require("./devices.json");
+//const devices = require("./devices.json");
 
 const host = "192.168.1.69";
 const port = "8091";
@@ -72,12 +72,16 @@ const get_room_by_id = async (room_id) =>
 const get_devices = async () => db_devices._data["data"];
 
 
-const get_device_by_name = (name) => {
+const get_device_by_name2 = (name) => {
 	for (var i = 0; i < devices.length; i++) {
 		if (devices[i].name == name) return devices[i];
 	}
 	return -1;
 }
+
+const get_device_by_name = async (name) =>
+	db_devices.find({name: name}, async (err, item) =>
+		!err ? item[0] : {"error": err} );
 
 
 const not_found = async (res, json = false) => {
@@ -108,13 +112,11 @@ const exec_event = (data) => {
 
 const process = async (req, res, data) => {
 	
-	console.log("process");
 	
 	let ret;
 	
 	try {
 	
-	console.log(data);
 	let to = data.to;
 	let ev = new M_Event(null, null, "root", data.data, null, null, unixtime());
 	
@@ -170,7 +172,6 @@ const process = async (req, res, data) => {
 			}
 			
 			resp = await get_room_by_id(room_id);
-			console.log("room", resp);
 			return resp;
 		}
 				
@@ -182,23 +183,29 @@ const process = async (req, res, data) => {
 			}
 			
 			resp = await get_automation_by_id(item_id);
-			console.log("room", resp);
 			return resp;
 		}
 		
 	} else {
 
 		ev.to = data.to;
-		var dev = get_device_by_name(data.to);
-		//console.log(dev);
+		var dev = await get_device_by_name(data.to);
 		if (dev < 0) return await not_found(res, true);
 		
-		exec_event(ev);
+		//exec_event(ev);
+		console.log(data);
+		console.log(dev);
 	
 		try {
 			
 			ev = new M_Event(null, "root", data.to, null, null, null, unixtime());
 			let data_ = !data.data ? data : data.data;
+			let command = data.command
+			
+			let cmccc = JSON.stringify( command ? dev.buttons[0][command] : JSON.parse(data_)  );
+			
+			console.log("command blyat", cmccc );
+			
 			const response = await fetch('http://' + 
 			dev.ip + ':' + dev.port, {
 			    method: 'POST',
@@ -206,10 +213,12 @@ const process = async (req, res, data) => {
 			        'Accept': 'application/json',
 			        'Content-Type': 'application/json'
 			    },
-			    body: JSON.stringify( JSON.parse(data_) )
+			    body: cmccc
 			});
 			
 			const body = await response.text();
+			console.log("resp body", body);
+			
 			ev.data = body;
 			//console.log("asd", body);
 			
@@ -244,15 +253,10 @@ const process = async (req, res, data) => {
 const get_listener = async (req, res, query) => {
 	
 	if (query.href == "/devices") {
-		fs.readFile(__dirname + "/devices.json", async (err, fd) => {
-
-			if (err) await not_found(res);
-	
-			res.writeHead(200);
-			res.end(fd);
-		});
-		return;
+		res.writeHead(200);
+		res.end( JSON.stringify( await get_devices() ) );
 	}
+	/*
 	else if (query.href == "/data") {
 		fs.readFile(__dirname + "/data.json", async (err, fd) => {
 
@@ -263,6 +267,7 @@ const get_listener = async (req, res, query) => {
 		});
 		return;
 	}
+	*/
 	else if (query.href == "/get_automations") {
 		res.writeHead(200);
 		res.end( JSON.stringify( await get_automations() ) );
@@ -399,7 +404,7 @@ function normaltime (time) {
 		setInterval(async () => {
 			//check for updates;
 			
-			let autos = db_automations._data["data"].forEach((el) =>
+			let autos = db_automations._data["data"].forEach(async (el) =>
 			{
 				
 				if ( el?.trigger?.startsWith("time") )
@@ -420,10 +425,11 @@ function normaltime (time) {
 						{
 							el.executed = false;
 							db_automations.flush();
-						}, 120000 );
+						}, ((60 * 60) * 1000) * 12 /* 12h */ );
 						
-						let devs = get_device_by_name(el.for);
-						if (devs != -1) {
+						let devs = await get_device_by_name(el.for);
+						console.log("device is", el.for, devs)
+						if (!devs.error) {							
 							
 							process(null, null, {
 								to: el.for,

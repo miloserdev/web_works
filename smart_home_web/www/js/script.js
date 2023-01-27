@@ -23,11 +23,11 @@ const update = () => {
 		let rm = cards.querySelector(`card[id="${el.id}"]`);
 		console.log(rm)
 		
-		let asd = dev.buttons.find(a => a.id == el.button).status;
-		asd = JSON.stringify(asd);
-		console.log(asd);
+		//let asd = dev.buttons.find(a => a.id == el.button).status;
+		//asd = JSON.stringify(asd);
+		//console.log(asd);
 		
-		sends( {"to": el.to, "data": `${asd}` }, e => {
+		sends( {"to": el.to, /*"data": `${asd}`*/ "command": "status" }, e => {
 			console.log(e);
 			rm.attributes.status.value = JSON.parse(e);
 		} );
@@ -102,49 +102,53 @@ const set_room = (room_id) => {
 		item = JSON.parse(item);
 		console.log(item);
 	
-	current_room = item.id;
+		current_room = item.id;
+		
+		cards.innerHTML = "";
+		room_title.innerText = item.name;
+		let scen = scenes_data.find(i => i.id == item.scene);
+		scen = scen ? scen.name : "None";
+		scene_title.innerText = `Scene: ${ scen }`;
+					
+		/*
+					let s = document.getElementById(item.scene).querySelector("a[button]");
+					
+					 if (s.classList.contains("active")) {
+				    	s.classList.remove("active");
+				  	} else s.classList.add("active");
+					*/
+					
+		item.elements.forEach(el => {
+			let d = devices_data.find(f => f.name == el.to);
+			console.log(`set button ${el.id} > ${el.button} to ${d.name}`);
+				cards.innerHTML += `
+				<card id="${el.id}"
+					normal="" status="">
+					<h1>${el.id}</h1>
+				</card>`;
+		});
 	
-	cards.innerHTML = "";
-	room_title.innerText = item.name;
-	let scen = scenes_data.find(i => i.id == item.scene);
-	scen = scen ? scen.name : "None";
-	scene_title.innerText = `Scene: ${ scen }`;
+		item.elements.forEach(el => {
+			let d = devices_data.find(f => f.name == el.to);
+			let els = cards.querySelector(`card[id="${el.id}"]`);
+			els.onclick = (e) => {
+				console.log(`push button ${el.id} > ${el.button} of ${d.name}`);
 				
-	/*
-				let s = document.getElementById(item.scene).querySelector("a[button]");
+				//let asd = d.buttons.find(a => a.id == el.button);
+				//asd = els.attributes.status.value == "on" ? asd.turn_off : asd.turn_on;
+				//asd = JSON.stringify(asd);
 				
-				 if (s.classList.contains("active")) {
-			    	s.classList.remove("active");
-			  	} else s.classList.add("active");
-				*/
+				let asd = els.attributes.status.value == "on" ? "turn_off" : "turn_on";
+				console.log("types", asd);
 				
-	item.elements.forEach(el => {
-		let d = devices_data.find(f => f.name == el.to);
-		console.log(`set button ${el.id} > ${el.button} to ${d.name}`);
-			cards.innerHTML += `
-			<card id="${el.id}"
-				normal="" status="off">
-				<h1>${el.id}</h1>
-			</card>`;
-	});
-
-	item.elements.forEach(el => {
-		let d = devices_data.find(f => f.name == el.to);
-		let els = cards.querySelector(`card[id="${el.id}"]`);
-		els.onclick = (e) => {
-			console.log(`push button ${el.id} > ${el.button} of ${d.name}`);
-			
-			let asd = d.buttons.find(a => a.id == el.button);
-			asd = els.attributes.status.value == "on" ? asd.turn_off : asd.turn_on;
-			asd = JSON.stringify(asd);
-			console.log("types", asd);
-			
-			sends( {"to": el.to, "data": `${asd}` }, e => {
-				console.log(e);
-				els.attributes.status.value = JSON.parse(e);
-			} );
-		}	
-	});
+				sends( {"to": el.to, /*"data": `${asd}`*/ "command": asd }, e => {
+					console.log(e);
+					els.attributes.status.value = JSON.parse(e);
+				} );
+			}	
+		});
+		
+		update();
 	
 	});
 }
@@ -359,12 +363,12 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 		
 		rooms.forEach((item) => {
 			let t = document.getElementById(item.id);
-			t.onclick = (e) => set_room(item.id);
+			t.onclick = (e) => current_room != item.id ? set_room(item.id) : null;
 			
 		});
 	});
 	
-	//setInterval(update, 5000);
+	setInterval(update, 5000);
 
 	console.log("DOMContentLoaded");
 });
