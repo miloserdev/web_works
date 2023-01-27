@@ -1,0 +1,217 @@
+<!DOCTYPE HTML>
+</html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1">
+	<link href="./js/round_slider/roundslider.min.css" rel="stylesheet">
+	<link href="./css/style.css" rel="stylesheet">
+<!--	<link href="./css/cards.css" rel="stylesheet"> -->
+	<link rel="stylesheet" href="./css/webfonts/all.css">
+	
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+</head>
+
+<body>
+
+	<app>
+
+		<drawer>
+			<drawer_header>
+			<!--
+				<a button fa> <i class="fa fa-minus"></i> </a>
+				<a button fa> <i class="fa fa-plus"></i> </a>
+				<h3>Header</h3>
+				<a button fa> <i class="fa fa-home"></i> </a>
+			 -->
+			 <h2>Smart home</h2>
+			</drawer_header>
+
+			<drawer_content>
+
+			<!-- 
+			<block>
+				<h1>Smart home</h1>
+			</block>
+			 -->
+			
+			<!-- 
+			<block>
+				<form search>
+				<i class="fa fa-search"></i>
+				<input type="search" placeholder="Search..."/>
+				</form>
+			</block>
+			-->
+			
+			<block> 
+
+				<h3>SCENES</h3>
+
+				<linear_scroller id="scenes">
+				
+<!--
+					<scene_holder>
+					<scene_push>
+				<a button flat linear>
+					<i class="fa fa-cog fa-spin"></i>
+					<i class="fa fa-bolt"></i>
+				</a>
+
+					</scene_push>
+					<h4>Settings</h4>
+					</scene_holder>
+
+					<scene_holder>
+					<scene_push><a button fa> <i class="fa fa-snooze"></i> </a></scene_push>
+					<h4>Sleep</h4>
+					</scene_holder>
+
+					<scene_holder>
+					<scene_push><a button fa> <i class="fa fa-guitar-electric"></i> </a></scene_push>
+					<h4>Rock</h4>
+					</scene_holder>
+
+					<scene_holder>
+					<scene_push><a button fa> <i class="fa fa-piano"></i> </a></scene_push>
+					<h4>Classic 1</h4>
+					</scene_holder>
+
+					<scene_holder>
+					<scene_push><a button fa> <i class="fa fa-record-vinyl"></i> </a></scene_push>
+					<h4>Classic 2</h4>
+					</scene_holder>
+
+					<scene_holder>
+					<scene_push><a button fa> <i class="fa fa-list-music"></i> </a></scene_push>
+					<h4>Relax</h4>
+					</scene_holder>
+-->
+				</linear_scroller>
+
+			</block>
+
+
+			<block>
+				<h3>ROOMS</h3>
+<!--
+				<rooms_holder>
+				<select size="5" id="room_id">
+					<a>asd</a>
+					<option value="room_1"><i class="fa fa-music"></i>Room 1</option>
+					<option value="room_2">Room 1</option>
+					<option value="room_3">Room 1</option>
+					<option value="room_4">Room 1</option>
+					<option value="room_5">Room 1</option>
+					<option value="room_6">Room 1</option>
+				</select>
+				</rooms_holder>
+-->
+
+				<list_holder id="rooms" style="display: display;">
+<!-- 					<a button etc>
+<i class="fa fa-snowflake"><div></div></i>Room 1</a>
+					<a button etc>Room 1</a>
+					<a button etc>Room 1</a>
+					<a button etc>Room 1</a>
+					<a button etc>Room 1</a>
+					<a button etc>Room 1</a>
+ -->
+				</list_holder>
+			</block>
+
+			<block>
+				<h3>AUTOMATIONS</h3>
+				<list_holder id="automations">
+
+				</list_holder>
+			</block>
+			
+			</drawer_content>
+
+		</drawer>
+
+
+		<room_board>
+
+			<drawer_header>
+			<!--	<a button a>EDIT</a> -->
+			
+				<h2 id="room_title">Loading...</h2>
+				<h3>23°C</h3>
+				<h3 id="scene_title">...</h3>
+			
+			</drawer_header>
+
+
+
+			<section id="boiler_room">
+				<h1>Switches</h1>
+		                <cards id="cards">
+<!-- 			                
+					<card id="gas_boiler_status_1" normal="" status="off">
+					<h1>Gas Status</h1></card>
+					<card id="gas_boiler_status_1" normal="" status="off">
+					<h1>Gas Status</h1></card>
+<card id="gas_boiler_status_1" normal="" status="off">
+					<h1>Gas Status</h1></card>
+					<card id="gas_boiler_status_1" normal="" status="off">
+					<h1>Gas Status</h1></card>
+<card id="gas_boiler_1" big="" status="off" style="width: 300px;"><h1>Gas Boiler</h1></card>
+
+<card id="gas_boiler_1" large="" status="off" style="width: 300px;"><h1>Gas Boiler</h1></card>
+
+<card id="gas_boiler_status_1" normal="" status="off"><h1>Gas Status</h1></card>
+
+<card id="gas_boiler_status_1" normal="" status="off"> <h1>Gas Status</h1></card>
+<card id="gas_boiler_status_1" normal="" status="off"> <h1>Gas Status</h1></card>
+<card id="gas_boiler_status_1" normal="" status="off"> <h1>Gas Status</h1></card>
+<card id="gas_boiler_status_1" normal="" status="off"><h1>Gas Status</h1></card>
+ -->
+
+				</cards>
+		        </section>
+
+		</room_board>
+
+		<info_drawer>
+
+			<info_header>
+				<item_info>
+					<a button="" circle=""><i class="fa fa-snowflake"></i></a>
+					<h1>Thermostat</h1>
+					<h2>Auto heating</h2>
+				</item_info>
+
+<input type="checkbox" name="toggle" id="toggle" class="Toggle__input">
+				<toggle></toggle>
+			</info_header>
+
+<svg style="display: none; height: 260px; width: 260px;">
+<path class="rs-transition rs-range" fill="transparent" d="M 44.440079476427755 215.55992052357226 A 121 121 0 1 1 215.55992052357234 215.55992052357215" stroke-width="18" stroke-linecap="round" stroke-dashoffset="0.01" style="stroke: rgb(0, 113, 227); stroke-dasharray: 0px, 0px, 250.033px, 570.199px;"></path>
+</svg>
+
+
+			<div id="slider2"></div>
+
+			<linear_scroller>
+			<a button flat>Timer mode</a>
+			<a button flat>Manual</a>
+			<a button flat>Auto</a>
+			</linear_scroller>
+
+
+		</info_drawer>
+
+
+	</app>
+	
+	<handler>Handler</handler>
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+<script src="./js/round_slider/roundslider.min.js"></script>
+<script src="./js/script.js"></script>
+
+</html>

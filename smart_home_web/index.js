@@ -286,7 +286,7 @@ const get_listener = async (req, res, query) => {
 	}
 
 	query.href = query.href == "/" ? "index.html" : query.href;
-	fs.readFile(__dirname + "/www/" + query.href, async (err, fd) => {
+	fs.readFile(__dirname + (req.domain == "v2" ? "/www2/" : "/www/") + query.href, async (err, fd) => {
 
 		if (err) await not_found(res);
 
@@ -333,6 +333,17 @@ const post_listener = async (req, res, query) => {
 
 
 const requestListener = async (req, res) => {
+	
+	req.domain = "";
+	
+	let domain = req.headers.host.split(".");
+	domain.pop();
+	domain = domain.join('.');
+	
+	console.log( { domain: domain } );
+	
+	req.domain = domain;
+	
 	let starts = performance.now();
 	
 	const query = url.parse(req.url, true);
