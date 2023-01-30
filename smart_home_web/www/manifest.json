@@ -1,0 +1,24 @@
+{
+    "name": "Home",
+    "short_name": "Home",
+  	"android_package_name": "com.homeuimaster",
+  	"background_color": "#fff",
+    "theme_color": "#000000",
+    "orientation": "portrait",
+  	"display": "minimal-ui",
+    "icons": [
+        {
+          "src": "./images/A.svg",
+          "sizes": "420x420",
+          "type": "image/svg"
+        },
+        {
+            "src": "./images/icon-a-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png"
+        }
+    ],
+
+    "scope": "/",
+    "start_url": "/?"
+  }

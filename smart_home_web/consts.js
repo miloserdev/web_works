@@ -7,6 +7,7 @@ class M_Event {
 		this.text = text;
 		this.status = status;
 		this.time = time;
+		this.response = null;
 	}
 }
 

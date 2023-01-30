@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+</html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1">
+	<meta name="viewport" 
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<link href="./css/style.css" rel="stylesheet">
+	<!--	<link href="./css/cards.css" rel="stylesheet"> -->
+	<link rel="stylesheet" href="./css/webfonts/all.css">
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+</head>
+<body>
+</body>
+<app>
+
+	<content id="content"></content>
+	
+	<navigation>
+		<nav_button sel>
+			<i class="fa fa-warehouse"></i>
+			<!-- <strong>Room</strong> -->
+			
+			<custom_select>
+				<strong>Rooms</strong>
+				<blocks>
+					<a link="/home">Home</a>
+					<a link="/scenes">Scenes</a>
+					<a link="/automation">Automation</a>
+				</blocks>
+			</custom_select>
+			
+			<!-- 
+			<select name="Room" id="room_selector">
+			  <option link="/home" value="/home">Home</option>
+			  <option link="/scenes" value="/scenes">Scenes</option>
+			  <option link="/automation" value="/automation">Automation</option>
+			  <option link="/settings" value="/settings">Settings</option>
+			</select>
+			-->
+			
+		</nav_button>
+		<nav_button sel link="/scenes">
+			<i class="fa fa-globe-snow"></i>
+			<strong>Scenes</strong>
+		</nav_button>
+		<nav_button sel link="/automation">
+			<i class="fa fa-cctv"></i>
+			<strong>Automation</strong>
+		</nav_button>
+		<nav_button sel link="/settings">
+			<i class="fa fa-cogs"></i>
+			<strong>Settings</strong>
+		</nav_button>
+	</navigation>
+
+</app>
+
+	<script src="./js/script.js"></script>
+<!--	https://raw.githubusercontent.com/Andy-set-studio/modern-css-reset/master/src/reset.css
+	-->
+</html>

@@ -1,4 +1,4 @@
-var origin = "192.168.1.69:8091";
+var origin = location.host;
 
 let scenes_data;
 let rooms_data;

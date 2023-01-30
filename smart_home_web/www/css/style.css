@@ -37,7 +37,7 @@ app {
 		"container"
 		"footer";
 	grid-template-columns: 1fr;
-	grid-template-rows: 5em auto auto 10vh;
+	grid-template-rows: 5em auto 1fr 10vh;
 }
 
 block {
@@ -75,13 +75,16 @@ header {
 
 posthead {
 	display: grid;
+	grid-auto-flow: column;
+	place-content: space-between;
 	grid-area: posthead;
+	width: 100%;
+	height: fit-content;
 	background: #171717;
 	background: #171717af;
+	backdrop-filter: saturate(180%) blur(20px);
 	padding: 20px;
 	z-index: 9;
-	display: none;
-	visibility: hidden;
 }
 
 
@@ -102,17 +105,18 @@ weather > i {
 
 
 linear_scroller {
-	display: grid;
+	display: flex;
 	grid-gap: 30px;
 	grid-auto-flow: column;
-/*! place-content: space-evenly; */
-	/*! justify-items: center; */
+	#justify-items: center;
+	#align-items: center;
 	overflow: scroll;
 	width: 100%;
 	color: white;
 	padding: 0 30px;
 	padding-bottom: 20px;
 	z-index: 9;
+	position: relative;
 	/*! background: white; */
 	/*! backdrop-filter: saturate(180%) blur(20px); */
 }
@@ -128,6 +132,7 @@ a[button] {
 	place-items: center;
 	grid-gap: 10px;
 	font-size: 1.1em;
+	cursor: pointer;
 }
 
 a[button] > .fa {
@@ -136,7 +141,7 @@ a[button] > .fa {
 
 a[button][etc] > i {
 	place-self: center;
-	margin-top: -7px;
+	#margin-top: -7px;
 }
 
 a[button][a] {
@@ -255,15 +260,19 @@ cards>card>h1 {
 
 container {
   overflow: scroll;
-  /*! position: absolute; */
-  width: 100vw;
-  /*! height: 100vh; */
+  position: absolute;
+  min-width: 100vw;
+  min-height: 100vh;
   grid-area: container;
   margin-top: -32vh;
   padding-top: 32vh;
-  /*! z-index: -1; */
+  z-index: -1;
   margin-bottom: -100px;
   padding-bottom: 100px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 
@@ -345,6 +354,7 @@ max-height: 250px;
 footer {
 	display: grid;
 	grid-area: footer;
+	width: 100vw;
 	background: #171717af;
 	backdrop-filter: saturate(180%) blur(20px);
 	z-index: 9;

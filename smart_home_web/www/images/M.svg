@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="420" viewBox="0 0 420 420">
+  <defs>
+    <style>
+      .cls-1 {
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <path id="Многоугольник_3" data-name="Многоугольник 3" class="cls-1" d="M370,250L250,370,130,250V370L40,460V40L250,250,460,40V460l-90-90V250Z" transform="translate(-40 -40)"/>
+</svg>

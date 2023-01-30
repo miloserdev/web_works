@@ -1,0 +1,232 @@
+
+
+input[type="range"],
+input[type="range"]::-webkit-slider-runnable-track,
+input[type="range"]::-webkit-slider-thumb {
+	transition: all ease 100ms;
+	-webkit-appearance: none;
+	-webkit-flex-basis: 100%;
+	-webkit-tap-highlight-color: transparent;
+	background: #fafafa;
+	background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) calc(var(--value) * -1%), rgba(255,255,255,1) calc(var(--value) * -1%), rgba(255,255,255,1) 100%);
+	border-radius: 20px;
+	min-width: 50px;
+	min-height: 50px;
+	#overflow: hidden;
+}
+
+input[type="range"]::-webkit-slider-runnable-track,
+input[type="range"]::-webkit-slider-thumb {
+	position: relative;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+	background: shit;
+}
+
+
+input[type=range]::-moz-range-progress {
+	background: #3b7ff4;
+	#border-right: 2px solid #3b7ff4;
+	height: 50px;
+}
+
+input[type="range"]::-webkit-slider-thumb,
+input[type=range]::-moz-range-thumb  {
+	width: 5px;
+	height: 30px;
+	border: none;
+	background: transparent;
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+
+
+
+input[type=range][orient="vertical"]::-moz-range-progress {
+	width: 100%;
+}
+
+input[type=range][orient="vertical"]::-moz-range-thumb {
+	width: 30px;
+	height: 5px;
+}
+
+
+
+
+
+/*
+ * 16 February 2022
+ * Range Slider Progress in Chrome with pure CSS
+ *
+ * === This CodePen demonstrates how we can implement range slider "progress fill" in Webkit browsers using a `clip-path` and a `box-shadow` ===
+ *
+ * === There is an open issue about Standardizing input[type="range"] styling (https://github.com/w3c/csswg-drafts/issues/4410). For all I know, it hasn't been implemented yet ===
+ *
+ * === This demo is meant for Chrome browsers. But it'll also work in Firefox because Firefox provides the `::-moz-range-progress` pseudo-class ===
+ *
+ * more info. in the details view
+ *
+ */
+
+html,
+body {
+	height: 100%;
+}
+
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+body {
+	display: grid;
+	place-items: center;
+}
+
+main {
+	display: flex;
+	flex-direction: column;
+	gap: 2.2em;
+	padding: 1em 0;
+}
+
+html::before {
+	content: "";
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100vw;
+	height: 100vh;
+	background: radial-gradient(circle at center, #fff, #fafafa);
+	display: block;
+}
+
+/* === range theme and appearance === */
+input[type="range"] {
+	font-size: 1.5rem;
+	width: 12.5em;
+}
+
+input[type="range"] {
+	color: #ef233c;
+	--thumb-height: 1.125em;
+	--track-height: 0.125em;
+	--track-color: rgba(0, 0, 0, 0.2);
+	--brightness-hover: 180%;
+	--brightness-down: 80%;
+	--clip-edges: 0.125em;
+}
+
+@media (prefers-color-scheme: dark) {
+	html {
+		background-color: #000;
+	}
+
+	html::before {
+		background: radial-gradient(circle at center, #101112, #000);
+	}
+
+	input[type="range"] {
+		color: #f07167;
+		--track-color: rgba(255, 255, 255, 0.1);
+	}
+
+	input[type="range"].win10-thumb {
+		color: #3a86ff;
+	}
+}
+
+/* === range commons === */
+input[type="range"] {
+	position: relative;
+	background: blue;
+	overflow: hidden;
+}
+
+input[type="range"]:active {
+	cursor: grabbing;
+}
+
+input[type="range"]:disabled {
+	filter: grayscale(1);
+	opacity: 0.3;
+	cursor: not-allowed;
+}
+
+/* === WebKit specific styles === */
+input[type="range"],
+input[type="range"]::-webkit-slider-runnable-track,
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	background: green;
+	height: 50px; 
+}
+
+input[type="range"]::-webkit-slider-runnable-track,
+input[type="range"]::-webkit-slider-thumb {
+	position: relative;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+	--thumb-radius: calc((var(--thumb-height) * 0.5) - 1px);
+	--clip-top: calc((var(--thumb-height) - var(--track-height)) * 0.5 - 0.5px);
+	--clip-bottom: calc(var(--thumb-height) - var(--clip-top));
+	--clip-further: calc(100% + 1px);
+	--box-fill: calc(-100vmax - var(--thumb-width, var(--thumb-height))) 0 0
+		100vmax #3b7ff4;
+
+	width: 50px;
+	background: #3b7ff4;
+	background-color: #3b7ff4;
+	box-shadow: var(--box-fill);
+	border-radius: 20px;
+}
+
+
+input[type="range"]::-webkit-slider-runnable-track {
+	background: #fafafa;
+}
+
+/* === Firefox specific styles === */
+input[type="range"],
+input[type="range"]::-moz-range-track,
+input[type="range"]::-moz-range-thumb {
+	appearance: none;
+	transition: all ease 100ms;
+	height: 50px;
+}
+
+input[type="range"]::-moz-range-track,
+input[type="range"]::-moz-range-thumb,
+input[type="range"]::-moz-range-progress {
+	background: shit;
+}
+
+input[type="range"]::-moz-range-thumb {
+	background: #3b7ff4;
+	width: 0px;
+	height: 0px;
+	cursor: grab;
+}
+
+input[type="range"]:active::-moz-range-thumb {
+	cursor: grabbing;
+}
+
+input[type="range"]::-moz-range-track {
+	width: 100%;
+	background: #fafafa;
+}
+
+input[type="range"]::-moz-range-progress {
+	appearance: none;
+	background: #3b7ff4;
+	transition-delay: 30ms;
+}
+
