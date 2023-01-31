@@ -172,22 +172,22 @@ const process = (message) => {
 	console[json["error"] ? "error" : "log"]
 		( "from websocket ->", json );
 	
-		let rm = cards.querySelector(`card[_button="${json.device}_${json.pin}"]`);
-		if (rm) {
-			console.log(`========${json.device}_${json.pin}`, rm)
-			rm.attributes.status.value = json.value;
-		}
+	let rm = cards.querySelector(`card[_button="${json.device}_${json.pin}"]`);
+	if (rm) {
+		console.log(`========${json.device}_${json.pin}`, rm)
+		rm.attributes.status.value = json.value;
+	}
 			
 	switch (command) {
 		
+		/*
 		case "status": {
 			let rm = cards.querySelector(`card[_button="${json.device}_${json.pin}"]`);
 			console.log(`========${json.device}_${json.pin}`, rm)
 			rm.attributes.status.value = json.value;
 		}
+		*/
 		
-		
-			
 		case "get_devices": {
 			devices_data = json;
 			break;
