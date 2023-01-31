@@ -1,8 +1,11 @@
 var origin = location.host;
+var websock;
+let reconnect_timer;
 
-let scenes_data;
-let rooms_data;
 let devices_data;
+let rooms_data;
+let scenes_data;
+let automations_data;
 
 let room_title = document.getElementById("room_title");
 let scene_title = document.getElementById("scene_title");
@@ -14,14 +17,16 @@ let rooms_holder = document.querySelector('linear_scroller[id="rooms_holder"]');
 let current_room;
 
 
+
+
+
+
+
 const update = () => {
 	rooms_data.find(i => i.id == current_room).elements.forEach(el => {
 		let dev = devices_data.find(f => f.name == el["device"]);
 
-		console.log("id", el.id)
-
 		let rm = cards.querySelector(`card[id="${el.id}"]`);
-		console.log(rm)
 
 		//let asd = dev.buttons.find(a => a.id == el.button).status;
 		//asd = JSON.stringify(asd);
@@ -31,11 +36,10 @@ const update = () => {
 			"device": el["device"],
 			/*"data": `${asd}`*/
 			"command": "status",
-			"args": { "pin": el.button }
+			"args": { "button": el.button }
 		}, e => {
-			console.log(e);
-			let json = JSON.parse(e);
-			console.log("========", json)
+			console.log("updater", e);
+			//let json = JSON.parse(e);
 			//rm.attributes.status.value = json.value
 		});
 	})
@@ -43,63 +47,6 @@ const update = () => {
 
 
 
-
-var post_load = (datas) => {
-
-	let scenes = datas["scenes"];
-
-	scenes.forEach((item) => {
-		let icons = item["icons"]
-			.map(e => `<i class="${e}"></i>`).join('');
-
-		scenes_holder.innerHTML +=
-			`<scene_holder>
-				<scene_push>
-					<a button ${item["button"]}>
-						${icons}
-					</a>
-				</scene_push>
-				<h4>${item.name}</h4>
-			</scene_holder>`;
-	});
-
-	let rooms = datas["rooms"];
-
-};
-
-
-const print_error = (response) => {
-	let errs = response["error"]["cause"];
-	if (errs) {
-		handler.innerHTML = `<a>code: ${errs.code}</a>
-						<a>errno: ${errs.errno}</a>
-						<a>syscall: ${errs.syscall}</a>`;
-		setTimeout(() => handler.innerHTML = "", 10000);
-	}
-}
-
-
-const sends = (data, cb) => {
-
-	console.log(data);
-
-	fetch(location.origin + "", {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		})
-		.then(response => response.json())
-		.then(response => {
-			var result = JSON.stringify(response);
-			if (response["error"] != undefined) {
-				//	print_error(response);
-			}
-			if (cb) /*console.log(cb);*/ cb(result);
-		});
-};
 
 
 const set_room = (room_id) => {
@@ -111,9 +58,10 @@ const set_room = (room_id) => {
 			room_id
 		}
 	}, (item) => {
+		
+		console.log("wtf room", item);
 
-		item = JSON.parse(item);
-		console.log(item);
+		//item = JSON.parse(item);
 
 		current_room = item.id;
 
@@ -138,6 +86,7 @@ const set_room = (room_id) => {
 				<card _button=${el.device}_${el.button}
 					  id="${el.id}"
 					normal="" status="">
+					<i class="fa fa-lamp"></i>
 					<h1>${el.id}</h1>
 				</card>`;
 		});
@@ -158,10 +107,11 @@ const set_room = (room_id) => {
 				sends({
 					"device": el["device"],
 					/*"data": `${asd}`*/ "command": asd,
-					args: { pin: el.button }
+					args: { "button": el["button"] }
 				}, e => {
-					console.log("ignore", e);
-					//els.attributes.status.value = JSON.parse(e);
+					//e = JSON.parse(e);
+					console.log("card click", e, "value", e.value);
+					els.attributes.status.value = e.value;
 				});
 			}
 		});
@@ -172,169 +122,167 @@ const set_room = (room_id) => {
 }
 
 
-const save_automation = (item_id) => {
-	let item_name = document.getElementById(`card_auto_${item_id}_name`).value;
-	let item_for = document.getElementById(`card_auto_${item_id}_for`).value;
-	let item_trigger = document.getElementById(`card_auto_${item_id}_trigger`).value;
-	let item_command = document.getElementById(`card_auto_${item_id}_command`).value;
-
-	console.log(item_id, item_name, item_for, item_trigger, item_command);
-
-	sends({
-		"device": "root",
-		"command": "set_automation",
-		"args": {
-			id: item_id,
-			name: item_name,
-			for: item_for,
-			trigger: item_trigger,
-			command: item_command
-		}
-	}, (item) => {
-		console.log(item);
-	});
-}
-
-const open_automation = (item_id) => {
-	sends({
-		"device": "root",
-		"command": "get_automation",
-		"args": {
-			item_id
-		}
-	}, (item) => {
-
-		item = JSON.parse(item);
-		console.log(item);
-
-		cards.innerHTML = "";
-		room_title.innerText = item.name;
-		scene_title.innerText = `Automation Setup`;
-
-		console.log(item.command)
-
-
-		cards.innerHTML += `
-	<block id="card_auto_${item.id}" style="width: fit-content; height: fit-content;" large>
-		<h1>${item.id}</h1>
-		<formd style="display: grid;" id="card_auto_${item.id}_form" onsubmit="event.preventDefault(); save_automation('${item_id}');">
-		
-		<input_box>
-		<label for="card_auto_${item.id}_name">Name</label>
-		<input type="text" id="card_auto_${item.id}_name" value="${item.name || null}"><br>
-		</input_box>
-		
-		<input_box>
-		<label for="card_auto_${item.id}_for">For</label>
-		<input type="text" id="card_auto_${item.id}_for" value="${item.for || null}"><br>
-		</input_box>
-		
-		<input_box>
-		<label for="card_auto_${item.id}_trigger">Trigger</label>
-		<input type="text" id="card_auto_${item.id}_trigger" value="${item.trigger || null}"><br>
-		</input_box>
-		
-		<input_box>
-		<label for="card_auto_${item.id}_command">Command</label>
-		<input type="text" id="card_auto_${item.id}_command" value="${ new String(item.command) || null}"><br>
-		</input_box>
-		
-		<input type="submit" value="Save" onclick="event.preventDefault(); save_automation('${item_id}');">
-		
-		</formd>
-	</block>`;
-
-	});
-}
 
 
 
-const require_install = () => {
-	window.addEventListener("beforeinstallprompt", (e) => {
-		// Prevent Chrome 67 and earlier from automatically showing the prompt
-		e.preventDefault();
-		// Stash the event so it can be triggered later.
-		deferredPrompt = e;
-		// Update UI to notify the user they can add to home screen
-		addBtn.style.display = "block";
 
-		addBtn.addEventListener("click", (e) => {
-			// hide our user interface that shows our A2HS button
-			addBtn.style.display = "none";
-			// Show the prompt
-			deferredPrompt.prompt();
-			// Wait for the user to respond to the prompt
-			deferredPrompt.userChoice.then((choiceResult) => {
-				if (choiceResult.outcome === "accepted") {
-					console.log("User accepted the A2HS prompt");
-				} else {
-					console.log("User dismissed the A2HS prompt");
-				}
-				deferredPrompt = null;
-			});
+
+
+
+const sends = (data, cb) => {
+
+	console.log("sends data", data);
+
+	fetch(location.origin + "", {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		})
+		.then(response => response.json())
+		.then(response => {
+			console.log("sends response", response);
+				
+			var result = json_normalize(response);
+			result._data = data;
+			if (response["error"] != undefined) {
+				//	print_error(response);
+			}
+			if (cb) cb(result);
 		});
-	});
+};
+
+
+const json_normalize = (data) => {
+	try {
+		data = JSON.parse(data);
+	} catch (e) {
+		console.log("already json, parse skipped");
+	}
+	return data;
 }
 
 
+const process = (message) => {
+	let json =  JSON.parse(message.data);
+	let command = json["command"];
+		
+	console[json["error"] ? "error" : "log"]
+		( "from websocket ->", json );
+	
+		let rm = cards.querySelector(`card[_button="${json.device}_${json.pin}"]`);
+		if (rm) {
+			console.log(`========${json.device}_${json.pin}`, rm)
+			rm.attributes.status.value = json.value;
+		}
+			
+	switch (command) {
+		
+		case "status": {
+			let rm = cards.querySelector(`card[_button="${json.device}_${json.pin}"]`);
+			console.log(`========${json.device}_${json.pin}`, rm)
+			rm.attributes.status.value = json.value;
+		}
+		
+		
+			
+		case "get_devices": {
+			devices_data = json;
+			break;
+		}
+			
+		case "get_automations": {
+			automations_data = json;
+			break;
+		}
+		/*
+		case "get_automation": {
+			devices_data = json;
+			break;
+		}
+		
+		case "set_automation": {
+			break;
+		}
+		
+			
+		case "get_scene": {
+			break;
+		}
+		*/
+		case "get_scenes": {
+			scenes_data = json;
+			break;
+		}
+		
+		case "set_scene": {
+			if (current_room != json["room_id"]) return;
+			sends({
+				"device": "root",
+				"command": "get_scene",
+				"args": {
+					"scene": json["scene"]
+				}
+			}, (data) => 
+				scene_title.innerHTML =
+					`Scene: ${data.name}` );
+							
+			break;
+		}
+		/*	
+		case "get_room": {
+			break;
+		}
+		*/
+		case "get_rooms": {
+			rooms_data = json;
+			break;
+		}
+	}
+	
+	document.querySelectorAll(`card[_button="${json.from}_${json.pin}"]`).forEach(e => {
+		console.log('naiden 2', e);
+		e.attributes.status.value = json.value;
+	});
+		
+}
 
-document.addEventListener("DOMContentLoaded", async (e) => {
 
-
-	var websock = new WebSocket(`ws://${location.hostname}:8093`);
+const init_websock = () => {
+	
+	websock = new WebSocket(`ws://${location.hostname}:8093`);
 	
 	websock.onopen = function () {
 	  console.log('websocket connected');
+	  clearInterval(reconnect_timer);
 	};
 	
 	websock.onmessage = function (message) {
-		console.log("from websocket ->");
-		console.log( JSON.parse(message.data) );
-		let json =  JSON.parse(message.data);
-		
-		let d = devices_data.find(f => f.name == json["from"]);
-		d = d["buttons"].find(el => el.id == json.pin);
-		
-		console.log(`card[_button="${json.from}_${json.pin}"]`);
-		
-		document.querySelectorAll(`card[_button="${json.from}_${json.pin}"]`).forEach(e => {
-			console.log('naiden 2', e);
-			e.attributes.status.value = json.value;
-		});
-		
-		console.log("naiden", d)
+		process(message);
 	};
 	
 	websock.onclose = function (message) {
-	  console.log("websocket closed, reconnecting");
-	  websock = new WebSocket('ws://localhost:8093');
-	};
+	  console.log("websocket error, reconnecting");
+	  reconnect_timer = setInterval( () =>
+	  	websock.CONNECTED ?
+	  	clearInterval(reconnect_timer): 
+	  	init_websock(), 5000);
+	}
+}
 
 
-	require_install();
 
 
-	await fetch("http://" + origin + "/get_devices", {
-			"credentials": "omit",
-			"headers": {
-				"Sec-Fetch-Dest": "script",
-			},
-			"method": "GET",
-			"mode": "cors"
-		})
-		.then(resp => resp.json())
-		.then(devices => devices_data = devices).then(r => console.log("fff", r));
-
-	await fetch("http://" + origin + "/get_automations", {
-			"credentials": "omit",
-			"headers": {
-				"Sec-Fetch-Dest": "script",
-			},
-			"method": "GET",
-			"mode": "cors"
-		})
-		.then(resp => resp.json())
-		.then(automations => {
+const init_app = async() => {
+	sends({
+		"command": "get_devices"
+	}, (devices) => devices_data = devices)
+	
+	sends({
+		"command": "get_automations"
+	}, (automations) => {
 
 			automations_data = automations;
 			console.log("automations", automations);
@@ -365,17 +313,9 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 		});
 
 
-	await fetch("http://" + origin + "/get_scenes", {
-			"credentials": "omit",
-			"headers": {
-				"Sec-Fetch-Dest": "script",
-			},
-			"method": "GET",
-			"mode": "cors"
-		})
-		.then(resp => resp.json())
-		//.then(data => JSON.parse(data))
-		.then(scenes => {
+	sends({
+		"command": "get_scenes"
+	}, (scenes) => {
 			scenes_data = scenes;
 			console.log("scenes", scenes);
 
@@ -411,17 +351,10 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 				}
 			})
 		});
-
-	await fetch("http://" + origin + "/get_rooms", {
-			"credentials": "omit",
-			"headers": {
-				"Sec-Fetch-Dest": "script",
-			},
-			"method": "GET",
-			"mode": "cors"
-		})
-		.then(resp => resp.json())
-		.then(rooms => {
+		
+	sends({
+		"command": "get_rooms"
+	}, (rooms) => {
 			rooms_data = rooms;
 
 			rooms.forEach((item) => {
@@ -443,8 +376,17 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 
 			});
 		});
+}
 
-	// setInterval(update, 5000);
 
+
+
+document.addEventListener("DOMContentLoaded", async (e) => {
+
+
+	init_websock();
+	
+	await init_app();
+	
 	console.log("DOMContentLoaded");
 });

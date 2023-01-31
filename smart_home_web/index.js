@@ -9,13 +9,6 @@ var websocket = null;
 
 const c = require("./colors.js");
 
-const {
-	M_Event,
-	Room,
-	Device,
-	unixtime
-} = require("./consts.js");
-
 const TinyDB = require("tinydb");
 var db_events;
 var db_automations;
@@ -29,6 +22,41 @@ const host = "192.168.1.69";
 const port = "8092";
 
 
+
+
+
+
+
+
+const get_devices = async () => db_devices._data["data"];
+const get_device_by_name = async (name) =>
+	db_devices.find({
+		name: name
+	}, async (err, item) =>
+		!err ? item[0] : {
+			"error": err
+		});
+const get_device_by_name2 = (name) => {
+	for (var i = 0; i < devices.length; i++) {
+		if (devices[i].name == name) return devices[i];
+	}
+	return -1;
+}
+const set_device = () => {};
+
+
+
+const get_scenes = async () =>
+	db_scenes._data["data"] || {
+		"error": "no scenes found"
+	};
+const get_scene_by_id = async (scene_id) =>
+	db_scenes.find({
+		id: scene_id
+	}, async (err, item) =>
+		!err ? item[0] : {
+			"error": err
+		});
 const set_scene = async (room_id, scene) => {
 
 	if (!room_id || !scene) {
@@ -37,24 +65,27 @@ const set_scene = async (room_id, scene) => {
 		};
 	}
 
-	let sce = db_rooms._data["data"].find((el) => el.id == room_id);
+	let rm = db_rooms._data["data"].find((el) => el.id == room_id);
+	//let sce = db_scenes._data["data"].find((el) => el.id == scene);
 
-	if (!sce) return {
+	if (!rm) return {
 		"error": "not found"
 	};
 
-	sce.scene = scene;
+	rm.scene = scene;
 	db_rooms.flush();
 
 	return {
-		"response": "OK"
+		command: "set_scene",
+		room_id: room_id,
+		scene: scene
 	};
 
 }
 
 
-const get_automations = async () => db_automations._data["data"];
 
+const get_automations = async () => db_automations._data["data"];
 const get_automation_by_id = async (item_id) =>
 	item_id ?
 	db_automations.find({
@@ -65,7 +96,6 @@ const get_automation_by_id = async (item_id) =>
 		}) : {
 		"error": "no item_id parameter"
 	};
-
 const set_automation = async (item_id, item_name, for_device, trigger, command) => {
 	let resp;
 
@@ -98,14 +128,13 @@ const set_automation = async (item_id, item_name, for_device, trigger, command) 
 		};
 	}
 	db_automations.flush();
+	
+	resp["command"] = "set_automation";
 
 	return resp;
 }
 
-const get_scenes = async () =>
-	db_scenes._data["data"] || {
-		"error": "no scenes found"
-	};
+
 
 const get_rooms = async () =>
 	db_rooms._data["data"] || {
@@ -123,23 +152,171 @@ const get_room_by_id = async (room_id) =>
 		"error": "no room_id parameter"
 	};
 
-const get_devices = async () => db_devices._data["data"];
 
 
-const get_device_by_name2 = (name) => {
-	for (var i = 0; i < devices.length; i++) {
-		if (devices[i].name == name) return devices[i];
+
+
+
+
+
+
+const process = async (data) => {
+	console.log("process", data);
+	
+	let _ret = [];
+	
+	try {
+		
+		if ( !data.device || data.device == "root" ) {
+
+			let command = data["command"];
+			let args = data["args"];
+			
+			switch (command) {
+				
+				case "get_devices": {
+					return await get_devices();
+				}
+				
+				case "get_automations": {
+					return await get_automations();
+				}
+				case "get_automation": {
+					return await get_automation_by_id(
+						data["get_automation"] );
+				}
+				case "set_automation": {
+					return await
+					set_automation(
+						args["id"],
+						args["name"],
+						args["for"],
+						args["trigger"],
+						args["command"] );
+				}
+				
+				case "get_scenes": {
+					return await get_scenes();
+				}
+				case "get_scene": {
+					return await
+					get_scene_by_id(args["scene"]);
+				}
+				case "set_scene": {
+					return await
+					set_scene(
+						args["room_id"],
+						args["scene"] );
+				}
+
+				
+				case "get_room": {
+					return await
+					get_room_by_id(args["room_id"] );
+				}
+				case "get_rooms": {
+					return await get_rooms();
+				}
+			}
+
+		} else {
+			
+			let command = data["command"];
+			let args = data["args"];
+			let button = args["button"] || 0;
+			let device = await get_device_by_name(data.device);
+			let buttons = device.buttons.find(el => el.id == button);
+			
+			console.log("button", button);
+			console.log("device", device);
+			console.log("buttons", buttons);
+			
+			let cmd = JSON.stringify(command ? buttons[command] : data);
+			
+			try {	
+				_ret = await fetch('http://' +
+				device.ip + ':' + device.port, {
+					method: 'POST',
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json'
+					},
+					body: cmd
+				})
+				
+				_ret = await _ret.json();	
+				_ret["command"] ? null : _ret["command"] = data["command"];
+				_ret["device"] ? null : _ret["device"] = data["device"];
+				
+			} catch (e) {
+				console.log(e);
+				broadcast({
+					from: data.device,
+					pin: button,
+					value: "unknown",
+					error: {
+						errno: e.cause.errno,
+						code: e.cause.code
+					}});
+				return e;
+			}
+		}
+		
+	} catch (e) {
+		console.log("error", e);
 	}
-	return -1;
+	
+	
+	broadcast( _ret );
 }
 
-const get_device_by_name = async (name) =>
-	db_devices.find({
-		name: name
-	}, async (err, item) =>
-		!err ? item[0] : {
-			"error": err
-		});
+
+
+
+
+const ws_handler = async (client) => {
+	
+	console.log(`${client.host} connected`);
+	
+	broadcast({ "log": "new client" })
+	
+	client.on("message", async (message) => {
+		console.log(`${client.host} -> ${message}`);
+		
+		var data = JSON.parse(await message);
+		
+		let _ret = await process(data);		
+		_ret["command"] ? null : _ret["command"] = data["command"];
+		_ret["device"] ? null : _ret["device"] = data["device"];
+		
+		
+
+		broadcast( _ret );
+	});
+	
+	client.on("disconnect", async () => {
+		console.log(`${client.host} disconnected`);
+	});
+	
+	client.on("close", async (client) => {
+		console.log(`${client.host} unhandled close`);
+	});
+}
+
+
+
+
+const get_listener = async (req, res, query) => {
+	
+	query.href = query.href == "/" ? "index.html" : query.href;
+	fs.readFile(__dirname + (req.domain == "v2" ? "/www2/" : "/www/") + query.href, async (err, fd) => {
+
+		if (err) await not_found(res);
+
+		res.writeHead(200);
+		res.end(fd);
+	});
+};
 
 
 const not_found = async (res, json = false) => {
@@ -157,213 +334,6 @@ const not_found = async (res, json = false) => {
 	console.log("not found");
 };
 
-
-const exec_event = (data) => {
-	///console.log("==========");
-	///console.log(data);
-	///console.log("==========");
-
-	get_automations().then(autos => {
-		let a = autos.filter(el => el.trigger == data.from);
-		a.forEach(a => console.log("eventing", a.command));
-	});
-}
-
-
-const process = async (req, res, data) => {
-	let resp;
-
-	try {
-
-		let ev = new M_Event(null, null, "root", data.data, null, null, unixtime());
-
-		if (!data.device || data.device == "root") {
-			ev.device = "root";
-
-			console.log(data);
-
-			//let data_ = !data.data ? data : data.data;
-
-			switch (data.command) {
-				case "set_automation": {
-					return await
-					set_automation(data.args.id,
-						data.args.name,
-						data.args.for,
-						data.args.trigger,
-						data.args.command);
-					break;
-				}
-				case "set_scene": {
-					return await
-					set_scene(data.args.room_id,
-						data.args.scene);
-					break;
-				}
-				case "get_room": {
-					return await get_room_by_id(data.args.room_id);
-					break;
-				}
-				case "get_automation": {
-					return await get_automation_by_id(data.get_automation);
-					break;
-				}
-			}
-
-			/*
-
-			if (data.set_automation) {
-				return await set_automation(data.set_automation.id,
-				data.set_automation.name, data.set_automation.for,
-				data.set_automation.trigger, data.set_automation.command);
-				
-			} else if (data.set_scene) {
-				return await set_scene(data.set_scene.room_id,
-				data.data.set_scene.scene);
-				
-			} else if (data.get_rooms) {
-				return await get_rooms();
-
-			} else if (data.get_room) {
-				return await get_room_by_id(data.get_room);
-				
-			} else if (data.get_automation) {
-				return await get_automation_by_id(data.get_automation);
-			}
-			*/
-
-		} else {
-
-			ev.device = data.device;
-			var dev = await get_device_by_name(data.device);
-			if (dev < 0) return await not_found(res, true);
-
-			//exec_event(ev);
-			console.log(data);
-			console.log(dev);
-
-			try {
-
-				ev = new M_Event(null, "root", data.device, null, null, null, unixtime());
-				let data_ = !data.data ? data : data.data;
-				let command = data.command;
-				let pin = data.args.pin || 0;
-
-				let cmccc = JSON.stringify(command ?
-						dev.buttons.find(el => el.id == pin)
-						[command] : JSON.parse(data_));
-
-				const response = await fetch('http://' +
-					dev.ip + ':' + dev.port, {
-						method: 'POST',
-						headers: {
-							'Accept': 'application/json',
-							'Content-Type': 'application/json'
-						},
-						body: cmccc
-					});
-
-				const body = await response.text();
-				var json_ret = JSON.parse(body);
-				json_ret["from"] = data["device"];
-				
-				console.log("resp body", body);
-
-				ev.data = body;
-				//console.log("asd", body);
-
-				ev.status = response.status;
-				ev.text = response.statusText;
-
-				exec_event(ev);
-				
-				broadcast( json_ret );
-
-				return body;
-
-			} catch (e) {
-				//console.log(e);
-				return "unknown";
-				//res.end( JSON.stringify( {"error": e} ) );
-			}
-
-		}
-
-		ev.time = unixtime();
-		db_events.appendItem(ev);
-		db_events.flush();
-
-	} catch (e) {
-		console.log(c.col_err("at parser "), e);
-	}
-
-	return "i don't know"
-
-}
-
-
-const get_listener = async (req, res, query) => {
-
-	switch (query.href) {
-		case "/devices": {
-			res.writeHead(200);
-			res.end(JSON.stringify(await get_devices()));
-			break;
-		}
-		case "/get_automations": {
-			res.writeHead(200);
-			res.end(JSON.stringify(await get_automations()));
-			break;
-		}
-		case "/get_scenes": {
-			res.writeHead(200);
-			res.end(JSON.stringify(await get_scenes()));
-			break;
-		}
-		case "/get_rooms": {
-			res.writeHead(200);
-			res.end(JSON.stringify(await get_rooms()));
-			break;
-		}
-		case "/get_devices": {
-			res.writeHead(200);
-			res.end(JSON.stringify(await get_devices()));
-			break;
-		}
-		default: {
-			query.href = query.href == "/" ? "index.html" : query.href;
-			fs.readFile(__dirname + (req.domain == "v2" ? "/www2/" : "/www/") + query.href, async (err, fd) => {
-
-				if (err) await not_found(res);
-
-				res.writeHead(200);
-				res.end(fd);
-			});
-			break;
-		}
-	}
-
-	/*
-		if (query.href == "/devices") {
-			res.writeHead(200);
-			res.end(JSON.stringify(await get_devices()));
-		}
-		else if (query.href == "/get_automations") {
-			res.writeHead(200);
-			res.end(JSON.stringify(await get_automations()));
-		} else if (query.href == "/get_scenes") {
-			res.writeHead(200);
-			res.end(JSON.stringify(await get_scenes()));
-		} else if (query.href == "/get_rooms") {
-			res.writeHead(200);
-			res.end(JSON.stringify(await get_rooms()));
-		} else if (query.href == "/get_devices") {
-			res.writeHead(200);
-			res.end(JSON.stringify(await get_devices()));
-		}
-	*/
-
-};
 
 
 const post_listener = async (req, res, query) => {
@@ -385,11 +355,11 @@ const post_listener = async (req, res, query) => {
 
 		req.on('end', async function() {
 			try {
-				var POST = qs.parse(body);
+				//var POST = qs.parse(body);
 				var obj = JSON.parse(body);
 
 				res.setHeader('Content-Type', 'application/json');
-				res.end(JSON.stringify(await process(req, res, obj)));
+				res.end( JSON.stringify( await process(obj) ) );
 			} catch (e) {
 				console.log(c.col_err("at req.on(end) "), e);
 			}
@@ -426,24 +396,6 @@ const requestListener = async (req, res) => {
 	return x;
 };
 
-const ws_handler = async (client) => {
-	
-	console.log(`${client.host} connected`);
-	
-	client.on("message", async (message) => {
-		console.log(`${client.host} -> ${message}`);
-	});
-	
-	client.on("disconnect", async () => {
-		console.log(`${client.host} disconnected`);
-	});
-	
-	client.on("close", async (client) => {
-		console.log(`${client.host} unhandled close`);
-	});
-}
-
-
 
 function normaltime(time) {
 	let now = new Date(Date.now());
@@ -469,8 +421,8 @@ const broadcast = (data) => {
 		db_events = new TinyDB("./data/events.json");
 		db_events.onReady = () => {
 			console.log("db_events is ready");
-			db_events.appendItem(new M_Event("status", "root", "run", 0, unixtime()));
-			db_events.flush();
+			//db_events.appendItem(new M_Event("status", "root", "run", 0, unixtime()));
+			//db_events.flush();
 		}
 
 		// const asd = require("./data.json");
@@ -478,20 +430,8 @@ const broadcast = (data) => {
 		db_automations = new TinyDB("./data/automations.json");
 		db_automations.onReady = () => {
 			console.log("db_automations is ready");
-			console.log(
-				set_automation("second", "Activity Simulation", "root", null, "LOG 1"),
-				set_automation("boiler_on", "Boiler turn on", "root", "time=20:10", {
-					to: "esp01_relay",
-					data: "[{\"relay\":0}]"
-				}),
-				set_automation("boiler_off", "Boiler turn off", "root", "time=6:10", {
-					to: "esp01_relay",
-					data: "[{\"relay\":1}]"
-				}),
-			)
-
-			db_automations._data["data"].forEach(el => el.executed = false);
-			db_automations.flush();
+			//db_automations._data["data"].forEach(el => el.executed = false);
+			//db_automations.flush();
 		}
 
 		db_scenes = new TinyDB("./data/scenes.json");
@@ -515,7 +455,8 @@ const broadcast = (data) => {
 		   websocket.clients.forEach( async (client) => {
 		       const data = JSON.stringify(
 						{'type': 'time',
-		       			'time': new Date().toTimeString()
+		       			'time': new Date().toTimeString(),
+		       			"clients": websocket.clients,
 		       			});
 		       client.send(data);
 		   });

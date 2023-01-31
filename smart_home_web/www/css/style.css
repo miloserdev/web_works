@@ -197,6 +197,18 @@ padding-top: 35px;
 overflow: hidden;
 }
 
+card::before {
+	content: "";
+	width: 15px;
+	height: 15px;
+	border-radius: 90px;
+	background: black;
+	position: absolute;
+	top: 20px;
+	right:15px;
+	display: none;
+}
+
 card[big] {
 width: 300px;
   grid-column: auto / span 2;
@@ -208,18 +220,37 @@ width: 300px;
   grid-row: auto / span 2;
 }
 
-
 card[status="on"] {
+	#border: 2px solid #0071e3;
+}
+card[status="on"]:befores {
 	background: #0071e3;
+	background: linear-gradient(to bottom, #59a2fb 0%, #3976f6 100%);
+}
+card[status="on"] > .fa {
 	background: linear-gradient(to bottom, #59a2fb 0%, #3976f6 100%);
 }
 
 card[status="off"] {
+	#border: 2px solid #fa2a42;
+}
+card[status="off"]:befores {
 	/*! background: #fa2a42; */
-	/*! background: linear-gradient(to bottom, #fb5959 0%, #f63939 100%) */
+	background: linear-gradient(to bottom, #fb5959 0%, #f63939 100%);
+}
+card[status="off"] > .fa {
+	background: linear-gradient(to bottom, #fb5959 0%, #f63939 100%);
+	background: #ffffff2e;
 }
 
+
 card[status="unknown"] {
+	#border: 2px solid #fdd32e;
+}
+card[status="unknown"]:befores {
+	background: #fdd32e;
+}
+card[status="unknown"] > .fa {
 	background: #fdd32e;
 }
 
@@ -248,6 +279,20 @@ z-index: 1;
 }
 
 
+cards>card>.fa {
+        font-size: 1.6em !important;;
+	font-weight: normal;
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        word-break: break-word;
+        z-index: 2;
+	background: #ffffff42;
+	padding: 15px;
+	border-radius: 90px;
+        width: fit-content;
+        height: fit-content;
+}
 
 cards>card>h1 {
         font-size: 1.1em;
@@ -256,6 +301,7 @@ cards>card>h1 {
         left: 15px;
         word-break: break-word;
         z-index: 2;
+	color: transparent;
 }
 
 container {
