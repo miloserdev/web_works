@@ -19,6 +19,17 @@ let current_room;
 
 
 
+/*
+
+"commands": [
+	{"name": "on","type": "command"},
+	{"name": "off","type": "command"},
+	{"name": "status","type": "command"}
+]
+
+*/
+
+
 
 
 

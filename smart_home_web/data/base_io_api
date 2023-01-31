@@ -29,3 +29,31 @@ curl -iX POST \
 '
 
 
+curl -iX POST \
+  'http://localhost:4041/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+  "devices": [
+    {
+      "device_id": "lamp001",
+      "entity_name": "urn:ngsi-ld:Lamp:001",
+      "entity_type": "Lamp",
+      "transport": "HTTP",
+      "endpoint": "http://iot-sensors:3001/iot/lamp001",
+      "commands": [
+        {"name": "on","type": "command"},
+        {"name": "off","type": "command"}
+       ],
+       "attributes": [
+        {"object_id": "s", "name": "state", "type":"Text"},
+        {"object_id": "l", "name": "luminosity", "type":"Integer"}
+       ],
+       "static_attributes": [
+         {"name":"refStore", "type": "Relationship","value": "urn:ngsi-ld:Store:001"}
+      ]
+    }
+  ]
+}
+'

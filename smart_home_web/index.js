@@ -23,7 +23,7 @@ const port = "8092";
 
 
 
-
+// Trying a new version of JSON packets
 
 
 
@@ -225,12 +225,7 @@ const process = async (data) => {
 			let args = data["args"];
 			let button = args["button"] || 0;
 			let device = await get_device_by_name(data.device);
-			let buttons = device.buttons.find(el => el.id == button);
-			
-			console.log("button", button);
-			console.log("device", device);
-			console.log("buttons", buttons);
-			
+			let buttons = device.buttons.find(el => el.id == button);			
 			let cmd = JSON.stringify(command ? buttons[command] : data);
 			
 			try {	
@@ -265,8 +260,7 @@ const process = async (data) => {
 	} catch (e) {
 		console.log("error", e);
 	}
-	
-	
+		
 	broadcast( _ret );
 }
 
@@ -289,8 +283,6 @@ const ws_handler = async (client) => {
 		_ret["command"] ? null : _ret["command"] = data["command"];
 		_ret["device"] ? null : _ret["device"] = data["device"];
 		
-		
-
 		broadcast( _ret );
 	});
 	
