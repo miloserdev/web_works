@@ -128,7 +128,7 @@ const set_automation = async (item_id, item_name, for_device, trigger, command) 
 		};
 	}
 	db_automations.flush();
-	
+
 	resp["command"] = "set_automation";
 
 	return resp;
@@ -155,35 +155,30 @@ const get_room_by_id = async (room_id) =>
 
 
 
-
-
-
-
-
 const process = async (data) => {
 	console.log("process", data);
-	
+
 	let _ret = [];
-	
+
 	try {
-		
-		if ( !data.device || data.device == "root" ) {
+
+		if (!data.device || data.device == "root") {
 
 			let command = data["command"];
 			let args = data["args"];
-			
+
 			switch (command) {
-				
+
 				case "get_devices": {
 					return await get_devices();
 				}
-				
+
 				case "get_automations": {
 					return await get_automations();
 				}
 				case "get_automation": {
 					return await get_automation_by_id(
-						data["get_automation"] );
+						data["get_automation"]);
 				}
 				case "set_automation": {
 					return await
@@ -192,9 +187,9 @@ const process = async (data) => {
 						args["name"],
 						args["for"],
 						args["trigger"],
-						args["command"] );
+						args["command"]);
 				}
-				
+
 				case "get_scenes": {
 					return await get_scenes();
 				}
@@ -206,13 +201,13 @@ const process = async (data) => {
 					return await
 					set_scene(
 						args["room_id"],
-						args["scene"] );
+						args["scene"]);
 				}
 
-				
+
 				case "get_room": {
 					return await
-					get_room_by_id(args["room_id"] );
+					get_room_by_id(args["room_id"]);
 				}
 				case "get_rooms": {
 					return await get_rooms();
@@ -220,29 +215,29 @@ const process = async (data) => {
 			}
 
 		} else {
-			
+
 			let command = data["command"];
 			let args = data["args"];
 			let button = args["button"] || 0;
 			let device = await get_device_by_name(data.device);
-			let buttons = device.buttons.find(el => el.id == button);			
+			let buttons = device.buttons.find(el => el.id == button);
 			let cmd = JSON.stringify(command ? buttons[command] : data);
-			
-			try {	
+
+			try {
 				_ret = await fetch('http://' +
-				device.ip + ':' + device.port, {
-					method: 'POST',
-					headers: {
-						'Accept': 'application/json',
-						'Content-Type': 'application/json'
-					},
-					body: cmd
-				})
-				
-				_ret = await _ret.json();	
+					device.ip + ':' + device.port, {
+						method: 'POST',
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json'
+						},
+						body: cmd
+					})
+
+				_ret = await _ret.json();
 				_ret["command"] ? null : _ret["command"] = data["command"];
 				_ret["device"] ? null : _ret["device"] = data["device"];
-				
+
 			} catch (e) {
 				console.log(e);
 				broadcast({
@@ -252,44 +247,46 @@ const process = async (data) => {
 					error: {
 						errno: e.cause.errno,
 						code: e.cause.code
-					}});
+					}
+				});
 				return e;
 			}
 		}
-		
+
 	} catch (e) {
 		console.log("error", e);
 	}
-		
-	broadcast( _ret );
+
+	broadcast(_ret);
 }
 
 
 
 
-
 const ws_handler = async (client) => {
-	
+
 	console.log(`${client.host} connected`);
-	
-	broadcast({ "log": "new client" })
-	
+
+	broadcast({
+		"log": "new client"
+	})
+
 	client.on("message", async (message) => {
 		console.log(`${client.host} -> ${message}`);
-		
+
 		var data = JSON.parse(await message);
-		
-		let _ret = await process(data);		
+
+		let _ret = await process(data);
 		_ret["command"] ? null : _ret["command"] = data["command"];
 		_ret["device"] ? null : _ret["device"] = data["device"];
-		
-		broadcast( _ret );
+
+		broadcast(_ret);
 	});
-	
+
 	client.on("disconnect", async () => {
 		console.log(`${client.host} disconnected`);
 	});
-	
+
 	client.on("close", async (client) => {
 		console.log(`${client.host} unhandled close`);
 	});
@@ -299,7 +296,7 @@ const ws_handler = async (client) => {
 
 
 const get_listener = async (req, res, query) => {
-	
+
 	query.href = query.href == "/" ? "index.html" : query.href;
 	fs.readFile(__dirname + (req.domain == "v2" ? "/www2/" : "/www/") + query.href, async (err, fd) => {
 
@@ -351,7 +348,7 @@ const post_listener = async (req, res, query) => {
 				var obj = JSON.parse(body);
 
 				res.setHeader('Content-Type', 'application/json');
-				res.end( JSON.stringify( await process(obj) ) );
+				res.end(JSON.stringify(await process(obj)));
 			} catch (e) {
 				console.log(c.col_err("at req.on(end) "), e);
 			}
@@ -400,10 +397,10 @@ function normaltime(time) {
 
 
 const broadcast = (data) => {
-	websocket.clients.forEach( async (client) => {
+	websocket.clients.forEach(async (client) => {
 		client.send(JSON.stringify(data));
 	});
-			
+
 }
 
 
@@ -442,17 +439,17 @@ const broadcast = (data) => {
 		}
 
 		setInterval(async () => {
-		
-		/*
-		   websocket.clients.forEach( async (client) => {
-		       const data = JSON.stringify(
-						{'type': 'time',
-		       			'time': new Date().toTimeString(),
-		       			"clients": websocket.clients,
-		       			});
-		       client.send(data);
-		   });
-		*/
+
+			/*
+			   websocket.clients.forEach( async (client) => {
+			       const data = JSON.stringify(
+							{'type': 'time',
+			       			'time': new Date().toTimeString(),
+			       			"clients": websocket.clients,
+			       			});
+			       client.send(data);
+			   });
+			*/
 			//check for updates;
 
 			let autos = db_automations._data["data"].forEach(async (el) => {
@@ -501,7 +498,9 @@ const broadcast = (data) => {
 		server.listen(port, host, () => {
 			console.log(`Server is running on http://${host}:${port}`);
 		});
-		websocket = new WebSocket.Server({ port: 8093});
+		websocket = new WebSocket.Server({
+			port: 8093
+		});
 		websocket.on("connection", ws_handler);
 	} catch (e) {
 		console.log(c.col_err("error occured\n"), e);

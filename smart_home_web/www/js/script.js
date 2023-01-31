@@ -32,7 +32,6 @@ let current_room;
 
 
 
-
 const update = () => {
 	rooms_data.find(i => i.id == current_room).elements.forEach(el => {
 		let dev = devices_data.find(f => f.name == el["device"]);
@@ -47,17 +46,18 @@ const update = () => {
 			"device": el["device"],
 			/*"data": `${asd}`*/
 			"command": "status",
-			"args": { "button": el.button }
+			"args": {
+				"button": el.button
+			}
 		}, e => {
 			console.log("updater", e);
 			//let json = JSON.parse(e);
 			//rm.attributes.status.value = json.value
-			
+
 			// Now using WebSocket to notify about changes | deprecated (maybe)
 		});
 	})
 }
-
 
 
 
@@ -71,7 +71,7 @@ const set_room = (room_id) => {
 			room_id
 		}
 	}, (item) => {
-		
+
 		current_room = item.id;
 		cards.innerHTML = "";
 		room_title.innerText = item.name;
@@ -102,8 +102,11 @@ const set_room = (room_id) => {
 
 				sends({
 					"device": el["device"],
-					/*"data": `${asd}`*/ "command": asd,
-					args: { "button": el["button"] }
+					/*"data": `${asd}`*/
+					"command": asd,
+					args: {
+						"button": el["button"]
+					}
 				}, e => {
 					console.log("card click", e, "value", e.value);
 					els.attributes.status.value = e.value;
@@ -115,11 +118,6 @@ const set_room = (room_id) => {
 
 	});
 }
-
-
-
-
-
 
 
 
@@ -139,7 +137,7 @@ const sends = (data, cb) => {
 		.then(response => response.json())
 		.then(response => {
 			console.log("sends response", response);
-				
+
 			var result = json_normalize(response);
 			result._data = data;
 			if (response["error"] != undefined) {
@@ -161,21 +159,21 @@ const json_normalize = (data) => {
 
 
 const process = (message) => {
-	let json =  JSON.parse(message.data);
+	let json = JSON.parse(message.data);
 	let command = json["command"];
-		
+
 	console[json["error"] ? "error" : "log"]
-		( "from websocket ->", json );
-	
+		("from websocket ->", json);
+
 	// Now hardcoded, sorry
 	let rm = cards.querySelector(`card[_button="${json.device}_${json.pin}"]`);
 	if (rm) {
 		console.log(`========${json.device}_${json.pin}`, rm)
 		rm.attributes.status.value = json.value;
 	}
-			
+
 	switch (command) {
-		
+
 		/*
 		case "status": {
 			let rm = cards.querySelector(`card[_button="${json.device}_${json.pin}"]`);
@@ -183,12 +181,12 @@ const process = (message) => {
 			rm.attributes.status.value = json.value;
 		}
 		*/
-		
+
 		case "get_devices": {
 			devices_data = json;
 			break;
 		}
-			
+
 		case "get_automations": {
 			automations_data = json;
 			break;
@@ -212,19 +210,19 @@ const process = (message) => {
 			scenes_data = json;
 			break;
 		}
-		
+
 		case "set_scene": {
 			if (current_room != json["room_id"]) return;
 			sends({
-				"device": "root",
-				"command": "get_scene",
-				"args": {
-					"scene": json["scene"]
-				}
-			}, (data) => 
+					"device": "root",
+					"command": "get_scene",
+					"args": {
+						"scene": json["scene"]
+					}
+				}, (data) =>
 				scene_title.innerHTML =
-					`Scene: ${data.name}` );
-							
+				`Scene: ${data.name}`);
+
 			break;
 		}
 		/*	
@@ -237,61 +235,59 @@ const process = (message) => {
 			break;
 		}
 	}
-	
+
 	document.querySelectorAll(`card[_button="${json.from}_${json.pin}"]`).forEach(e => {
 		console.log('naiden 2', e);
 		e.attributes.status.value = json.value;
 	});
-		
+
 }
 
 
 const init_websock = () => {
-	
+
 	websock = new WebSocket(`ws://${location.hostname}:8093`);
-	
-	websock.onopen = function () {
-	  console.log('websocket connected');
-	  clearInterval(reconnect_timer);
+
+	websock.onopen = () => {
+		console.log('websocket connected');
+		clearInterval(reconnect_timer);
 	};
-	
-	websock.onmessage = function (message) {
-		process(message);
-	};
-	
-	websock.onclose = function (message) {
-	  console.log("websocket error, reconnecting");
-	  reconnect_timer = setInterval( () =>
-	  	websock.CONNECTED ?
-	  	clearInterval(reconnect_timer): 
-	  	init_websock(), 5000);
+
+	websock.onmessage = process;
+
+	websock.onclose = () => {
+		console.log("websocket closed, reconnecting");
+		reconnect_timer = setInterval(() =>
+			websock.CONNECTED ?
+			clearInterval(reconnect_timer) :
+			init_websock(), 5000);
 	}
 }
 
 
 
 
-const init_app = async() => {
+const init_app = async () => {
 	sends({
 		"command": "get_devices"
 	}, (devices) => devices_data = devices)
-	
+
 	sends({
 		"command": "get_automations"
 	}, (automations) => {
 
-			automations_data = automations;
-			console.log("automations", automations);
+		automations_data = automations;
+		console.log("automations", automations);
 
-			if (!automations_holder) return;
+		if (!automations_holder) return;
 
-			automations.forEach((item) => {
-				console.log("auto", item);
-				let icons = item["icons"];
-				if (icons) icons = icons.map(e => `<i class="${e}"></i>`).join('');
+		automations.forEach((item) => {
+			console.log("auto", item);
+			let icons = item["icons"];
+			if (icons) icons = icons.map(e => `<i class="${e}"></i>`).join('');
 
-				automations_holder.innerHTML +=
-					`<round_holder flat id="automation_${item.id}">
+			automations_holder.innerHTML +=
+				`<round_holder flat id="automation_${item.id}">
 						<round_push flat>
 							<a button ${item["button"]}>
 								${item.name}
@@ -299,30 +295,30 @@ const init_app = async() => {
 							<h4>${item.for}</h4><h4 style="color: #6c757d">${item.trigger}</h4>
 						</round_push>
 					</round_holder>`;
-			});
-
-			automations.forEach((item) => {
-				let t = document.getElementById("automation_" + item.id);
-				t.onclick = (e) => open_automation(item.id);
-
-			});
 		});
+
+		automations.forEach((item) => {
+			let t = document.getElementById("automation_" + item.id);
+			t.onclick = (e) => open_automation(item.id);
+
+		});
+	});
 
 
 	sends({
 		"command": "get_scenes"
 	}, (scenes) => {
-			scenes_data = scenes;
-			console.log("scenes", scenes);
+		scenes_data = scenes;
+		console.log("scenes", scenes);
 
-			if (!scenes_holder) return;
+		if (!scenes_holder) return;
 
-			scenes.forEach((item) => {
-				let icons = item["icons"]
-					.map(e => `<i class="${e}"></i>`).join('');
+		scenes.forEach((item) => {
+			let icons = item["icons"]
+				.map(e => `<i class="${e}"></i>`).join('');
 
-				scenes_holder.innerHTML +=
-					`<round_holder id="${item.id}">
+			scenes_holder.innerHTML +=
+				`<round_holder id="${item.id}">
 						<round_push>
 							<a button ${item["button"]}>
 								${icons}
@@ -330,48 +326,48 @@ const init_app = async() => {
 						</round_push>
 						<h4>${item.name}</h4>
 					</round_holder>`;
-			});
-
-			scenes.forEach((item) => {
-				console.log(item);
-				let s = document.getElementById(item.id);
-				s.onclick = (e) => {
-					scene_title.innerText = `Scene: ${item.name}`;
-					sends({
-						"command": "set_scene",
-						"args": {
-							"room_id": current_room,
-							"scene": item.id
-						}
-					}, (e) => console.log(e));
-				}
-			})
 		});
-		
+
+		scenes.forEach((item) => {
+			console.log(item);
+			let s = document.getElementById(item.id);
+			s.onclick = (e) => {
+				scene_title.innerText = `Scene: ${item.name}`;
+				sends({
+					"command": "set_scene",
+					"args": {
+						"room_id": current_room,
+						"scene": item.id
+					}
+				}, (e) => console.log(e));
+			}
+		})
+	});
+
 	sends({
 		"command": "get_rooms"
 	}, (rooms) => {
-			rooms_data = rooms;
+		rooms_data = rooms;
 
-			rooms.forEach((item) => {
-				let icons =
-					item["icons"].map(e => `<i class="${e}"></i>`).join('');
+		rooms.forEach((item) => {
+			let icons =
+				item["icons"].map(e => `<i class="${e}"></i>`).join('');
 
-				rooms_holder.innerHTML +=
-					`<a button etc id="${item.id}">
+			rooms_holder.innerHTML +=
+				`<a button etc id="${item.id}">
 						${icons}
 					</i>${item.name}</a>`;
-			});
-
-			current_room = rooms[0].id;
-			set_room(current_room);
-
-			rooms.forEach((item) => {
-				let t = document.getElementById(item.id);
-				t.onclick = (e) => current_room != item.id ? set_room(item.id) : null;
-
-			});
 		});
+
+		current_room = rooms[0].id;
+		set_room(current_room);
+
+		rooms.forEach((item) => {
+			let t = document.getElementById(item.id);
+			t.onclick = (e) => current_room != item.id ? set_room(item.id) : null;
+
+		});
+	});
 }
 
 
@@ -381,8 +377,8 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 
 
 	init_websock();
-	
+
 	await init_app();
-	
+
 	console.log("DOMContentLoaded");
 });
