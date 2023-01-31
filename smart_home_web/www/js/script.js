@@ -18,7 +18,7 @@ let current_room;
 
 
 
-
+// Trying a new version of JSON packets
 /*
 
 "commands": [
@@ -52,6 +52,8 @@ const update = () => {
 			console.log("updater", e);
 			//let json = JSON.parse(e);
 			//rm.attributes.status.value = json.value
+			
+			// Now using WebSocket to notify about changes | deprecated (maybe)
 		});
 	})
 }
@@ -70,25 +72,12 @@ const set_room = (room_id) => {
 		}
 	}, (item) => {
 		
-		console.log("wtf room", item);
-
-		//item = JSON.parse(item);
-
 		current_room = item.id;
-
 		cards.innerHTML = "";
 		room_title.innerText = item.name;
 		let scen = scenes_data.find(i => i.id == item.scene);
 		scen = scen ? scen.name : "None";
 		scene_title.innerText = `Scene: ${ scen }`;
-
-		/*
-					let s = document.getElementById(item.scene).querySelector("a[button]");
-					
-					 if (s.classList.contains("active")) {
-				    	s.classList.remove("active");
-				  	} else s.classList.add("active");
-					*/
 
 		item.elements.forEach(el => {
 			let d = devices_data.find(f => f.name == el["device"]);
@@ -108,10 +97,6 @@ const set_room = (room_id) => {
 			els.onclick = (e) => {
 				console.log(`push button ${el.id} > ${el.button} of ${d.name}`);
 
-				//let asd = d.buttons.find(a => a.id == el.button);
-				//asd = els.attributes.status.value == "on" ? asd.turn_off : asd.turn_on;
-				//asd = JSON.stringify(asd);
-
 				let asd = els.attributes.status.value == "on" ? "turn_off" : "turn_on";
 				console.log("types", asd);
 
@@ -120,7 +105,6 @@ const set_room = (room_id) => {
 					/*"data": `${asd}`*/ "command": asd,
 					args: { "button": el["button"] }
 				}, e => {
-					//e = JSON.parse(e);
 					console.log("card click", e, "value", e.value);
 					els.attributes.status.value = e.value;
 				});
@@ -159,7 +143,7 @@ const sends = (data, cb) => {
 			var result = json_normalize(response);
 			result._data = data;
 			if (response["error"] != undefined) {
-				//	print_error(response);
+				console.error(response);
 			}
 			if (cb) cb(result);
 		});
@@ -183,6 +167,7 @@ const process = (message) => {
 	console[json["error"] ? "error" : "log"]
 		( "from websocket ->", json );
 	
+	// Now hardcoded, sorry
 	let rm = cards.querySelector(`card[_button="${json.device}_${json.pin}"]`);
 	if (rm) {
 		console.log(`========${json.device}_${json.pin}`, rm)
