@@ -9,8 +9,10 @@ var websocket = null;
 
 const c = require("./colors.js");
 
+// MIGRATION TO LOWDB;
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
+const db = low(new FileSync('./data/db.json'));
 
 /*
 const db_auto = low(new FileSync('./data/db_auto.json'));
@@ -26,8 +28,7 @@ var db_rooms;
 var db_devices;
 */
 
-// MIGRATION TO LOWDB;
-const db = low(new FileSync('./data/db.json'));
+
 
 
 const host = "192.168.1.69";
@@ -70,7 +71,7 @@ const set_scene = async (room_id, scene_) => {
 
 	if (!room_id || !scene_) {
 		return {
-			"error": "no room_id or scene parameter"
+			"error": "no room_id or scene args"
 		};
 	}
 	
@@ -99,8 +100,17 @@ const set_scene = async (room_id, scene_) => {
 
 
 
-const get_automations = async () => db_automations._data["data"];
+const get_automations = async () =>
+	db.get("automations").value() || {
+		"error": "no automations found"
+	};
 const get_automation_by_id = async (item_id) =>
+	item_id ?
+		db.get("automations").find({
+			id: item_id
+		}).value() || null
+	: { error: "no item_id arg"}
+/*
 	item_id ?
 	db_automations.find({
 		id: item_id
@@ -110,6 +120,8 @@ const get_automation_by_id = async (item_id) =>
 		}) : {
 		"error": "no item_id parameter"
 	};
+*/
+
 const set_automation = async (item_id, item_name, for_device, trigger, command) => {
 	let resp;
 
@@ -118,8 +130,23 @@ const set_automation = async (item_id, item_name, for_device, trigger, command) 
 			"error": "no item_name || item_id || for_ || trigger_ || command_ parameter"
 		};
 	}
-	let item = db_automations._data["data"].find((el) => el.id == item_id);
+	
+	let autos = db.get("automations");
+	let item = autos.find({ id: item_id });
+	let datas = {
+			id: item_id,
+			name: item_name,
+			for: for_device,
+			trigger: trigger,
+			command: command
+		};
+	
+	//let item = db_automations._data["data"].find((el) => el.id == item_id);
 	if (!item) {
+		
+		autos.push(datas).write();
+		
+		/*
 		db_automations.appendItem({
 			id: item_id,
 			name: item_name,
@@ -127,21 +154,22 @@ const set_automation = async (item_id, item_name, for_device, trigger, command) 
 			trigger: trigger,
 			command: command
 		});
+		*/
+		
 		resp = {
 			"response": "OK",
 			"misc": "not_exist_set"
 		};
 	} else {
-		item.name = item_name || item.name;
-		item.for = for_device || item.for;
-		item.trigger = trigger || item.trigger;
-		item.command = command || item.command;
+		
+		item.assign(datas).write();
+		
 		resp = {
 			"response": "OK",
 			"misc": "exist_set"
 		};
 	}
-	db_automations.flush();
+	//db_automations.flush();
 
 	resp["command"] = "set_automation";
 
@@ -151,7 +179,7 @@ const set_automation = async (item_id, item_name, for_device, trigger, command) 
 
 
 const get_rooms = async () =>
-	db_rooms._data["data"] || {
+	db.get("rooms").value() || {
 		"error": "no rooms found"
 	};
 
@@ -327,8 +355,12 @@ const get_listener = async (req, res, query) => {
 	});
 };
 
-
-const not_found = async (res, json = false) => {
+const not_found = async (res, json = false) => 
+	json ? res.setHeader('Content-Type', 'application/json')
+			.end(JSON.stringify({ "error": "404" }))
+		: res.writeHead(404).end("not found");
+/*
+const not_found2 = async (res, json = false) => {
 
 	if (json) {
 		res.setHeader('Content-Type', 'application/json');
@@ -342,7 +374,7 @@ const not_found = async (res, json = false) => {
 
 	console.log("not found");
 };
-
+*/
 
 
 const post_listener = async (req, res, query) => {
@@ -416,12 +448,9 @@ function normaltime(time) {
 }
 
 
-const broadcast = (data) => {
-	websocket.clients.forEach(async (client) => {
-		client.send(JSON.stringify(data));
-	});
-
-}
+const broadcast = (data) =>
+	websocket.clients.forEach(async (client) =>
+		client.send(JSON.stringify(data)));
 
 
 (main = async () => {
