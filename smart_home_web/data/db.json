@@ -1,0 +1,286 @@
+{
+  "rooms": [
+    {
+      "id": "boiler_room",
+      "name": "Boiler Room",
+      "icons": [
+        "fa fa-heat"
+      ],
+      "scene": "scene_settings",
+      "elements": [
+        {
+          "id": "button_1",
+          "device": "relay_array_1",
+          "button": "33"
+        },
+        {
+          "id": "button_2",
+          "device": "esp01_relay",
+          "button": "0"
+        }
+      ]
+    },
+    {
+      "id": "kitchen_1",
+      "name": "Kitchen",
+      "icons": [
+        "fa fa-oven"
+      ],
+      "elements": []
+    },
+    {
+      "id": "living_room_1",
+      "name": "Living Room",
+      "icons": [
+        "fa fa-users"
+      ],
+      "scene": "scene_settings",
+      "elements": []
+    },
+    {
+      "id": "bedroom_1",
+      "name": "Bed Room",
+      "icons": [
+        "fa fa-bed"
+      ],
+      "elements": []
+    },
+    {
+      "id": "bathroom_1",
+      "name": "Bath Room",
+      "icons": [
+        "fa fa-bath"
+      ],
+      "elements": []
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_settings",
+      "name": "Settings",
+      "button": "flat linear",
+      "icons": [
+        "fa fa-cog fa-spin",
+        "fa fa-bolt"
+      ]
+    },
+    {
+      "id": "scene_sleep",
+      "name": "Sleep",
+      "button": "fa",
+      "icons": [
+        "fa fa-snooze"
+      ]
+    },
+    {
+      "id": "scene_rock",
+      "name": "Rock",
+      "button": "fa",
+      "icons": [
+        "fa fa-guitar-electric"
+      ]
+    },
+    {
+      "id": "scene_classic_1",
+      "name": "Classic 1",
+      "button": "fa",
+      "icons": [
+        "fa fa-piano"
+      ]
+    },
+    {
+      "id": "scene_classic_2",
+      "name": "Classic 2",
+      "button": "fa",
+      "icons": [
+        "fa fa-record-vinyl"
+      ]
+    },
+    {
+      "id": "scene_relax",
+      "name": "Relax",
+      "button": "fa",
+      "icons": [
+        "fa fa-list-music"
+      ]
+    }
+  ],
+  "automations": [
+    {
+      "id": "main",
+      "name": "Update",
+      "device": "esp01_relay",
+      "command": {},
+      "exec": true
+    },
+    {
+      "id": "second",
+      "name": "Activity Simulation",
+      "device": "root",
+      "command": {},
+      "exec": true
+    },
+    {
+      "id": "boiler_on",
+      "name": "Boiler turn on",
+      "device": "root",
+      "command": {
+        "device": "esp01_relay",
+        "data": "[{\"relay\":0}]"
+      },
+      "exec": true
+    },
+    {
+      "id": "boiler_off",
+      "name": "Boiler turn off",
+      "device": "root",
+      "command": {
+        "device": "esp01_relay",
+        "data": "[{\"relay\":1}]"
+      },
+      "exec": false
+    }
+  ],
+  "devices": [
+    {
+      "id": 2,
+      "name": "esp01_relay",
+      "type": "switch",
+      "ip": "192.168.1.101",
+      "port": 8081,
+      "buttons": [
+        {
+          "id": 0,
+          "turn_on": [
+            {
+              "relay": 0
+            }
+          ],
+          "turn_off": [
+            {
+              "relay": 1
+            }
+          ],
+          "status": [
+            {
+              "relay": "state"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "relay_array_1",
+      "type": "switch",
+      "ip": "192.168.1.65",
+      "port": 8081,
+      "buttons": [
+        {
+          "id": 32,
+          "turn_on": [
+            {
+              "digitalWrite": {
+                "pin": 32,
+                "value": 0
+              }
+            }
+          ],
+          "turn_off": [
+            {
+              "digitalWrite": {
+                "pin": 32,
+                "value": 1
+              }
+            }
+          ],
+          "status": [
+            {
+              "digitalRead": {
+                "pin": 32
+              }
+            }
+          ]
+        },
+        {
+          "id": 33,
+          "turn_on": [
+            {
+              "digitalWrite": {
+                "pin": 33,
+                "value": 0
+              }
+            }
+          ],
+          "turn_off": [
+            {
+              "digitalWrite": {
+                "pin": 33,
+                "value": 1
+              }
+            }
+          ],
+          "status": [
+            {
+              "digitalRead": {
+                "pin": 33
+              }
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "turn_on": [
+            {
+              "digitalWrite": {
+                "pin": 25,
+                "value": 0
+              }
+            }
+          ],
+          "turn_off": [
+            {
+              "digitalWrite": {
+                "pin": 25,
+                "value": 1
+              }
+            }
+          ],
+          "status": [
+            {
+              "digitalRead": {
+                "pin": 25
+              }
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "turn_on": [
+            {
+              "digitalWrite": {
+                "pin": 26,
+                "value": 0
+              }
+            }
+          ],
+          "turn_off": [
+            {
+              "digitalWrite": {
+                "pin": 26,
+                "value": 1
+              }
+            }
+          ],
+          "status": [
+            {
+              "digitalRead": {
+                "pin": 26
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

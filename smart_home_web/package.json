@@ -9,7 +9,7 @@
   "author": "Miloserdev",
   "license": "GPL-3.0",
   "dependencies": {
-    "lowdb": "^5.0.5",
+    "lowdb": "^1.0.0",
     "node-fetch": "^3.3.0",
     "tinydb": "^0.1.0",
     "ws": "^8.12.0"

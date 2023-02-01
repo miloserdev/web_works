@@ -260,7 +260,7 @@ const init_websock = () => {
 		reconnect_timer = setInterval(() =>
 			websock.CONNECTED ?
 			clearInterval(reconnect_timer) :
-			init_websock(), 5000);
+			/*init_websock() */ null, 5000);
 	}
 }
 

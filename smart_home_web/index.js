@@ -9,14 +9,26 @@ var websocket = null;
 
 const c = require("./colors.js");
 
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+
+/*
+const db_auto = low(new FileSync('./data/db_auto.json'));
+const db_scen = low(new FileSync('./data/db_scenes.json'));
+const db_devs = low(new FileSync('./data/db_devices.json'));
+const db_room = low(new FileSync('./data/db_rooms.json'));
+
 const TinyDB = require("tinydb");
 var db_events;
 var db_automations;
 var db_scenes;
 var db_rooms;
 var db_devices;
+*/
 
-//const devices = require("./devices.json");
+// MIGRATION TO LOWDB;
+const db = low(new FileSync('./data/db.json'));
+
 
 const host = "192.168.1.69";
 const port = "8092";
@@ -28,14 +40,11 @@ const port = "8092";
 
 
 
-const get_devices = async () => db_devices._data["data"];
+const get_devices = async () => db.get("devices").value();
 const get_device_by_name = async (name) =>
-	db_devices.find({
+	db.get("devices").find({
 		name: name
-	}, async (err, item) =>
-		!err ? item[0] : {
-			"error": err
-		});
+	}).value() || null;
 const get_device_by_name2 = (name) => {
 	for (var i = 0; i < devices.length; i++) {
 		if (devices[i].name == name) return devices[i];
@@ -47,38 +56,43 @@ const set_device = () => {};
 
 
 const get_scenes = async () =>
-	db_scenes._data["data"] || {
+	db.get("scenes").value() || {
 		"error": "no scenes found"
 	};
 const get_scene_by_id = async (scene_id) =>
-	db_scenes.find({
+	db.get("scenes").value().find({
 		id: scene_id
 	}, async (err, item) =>
 		!err ? item[0] : {
 			"error": err
 		});
-const set_scene = async (room_id, scene) => {
+const set_scene = async (room_id, scene_) => {
 
-	if (!room_id || !scene) {
+	if (!room_id || !scene_) {
 		return {
 			"error": "no room_id or scene parameter"
 		};
 	}
+	
+	let rm = db.get("rooms").find({ id: room_id });
 
-	let rm = db_rooms._data["data"].find((el) => el.id == room_id);
+
+	//let rm = db_rooms._data["data"].find((el) => el.id == room_id);
 	//let sce = db_scenes._data["data"].find((el) => el.id == scene);
 
 	if (!rm) return {
 		"error": "not found"
 	};
 
-	rm.scene = scene;
-	db_rooms.flush();
+	rm.assign({ scene: scene_ }).write();
+
+	//rm.scene = scene_;
+	//db_rooms.flush();
 
 	return {
 		command: "set_scene",
 		room_id: room_id,
-		scene: scene
+		scene: scene_
 	};
 
 }
@@ -157,12 +171,18 @@ const get_room_by_id = async (room_id) =>
 
 const process = async (data) => {
 	console.log("process", data);
+	
+	let device = await get_device_by_name(data.device);
+	console.log("IFDEVICE", device);
 
 	let _ret = [];
+	_ret["device"] = data["device"];
+	//_ret["device"] = data["device"];
 
 	try {
 
-		if (!data.device || data.device == "root") {
+		// IF DEVICE IS BRIDGE;
+		if (!device || data["device"] == "root") {
 
 			let command = data["command"];
 			let args = data["args"];
@@ -214,12 +234,12 @@ const process = async (data) => {
 				}
 			}
 
+		// IF DEVICE IS OTHER FROM DEVICES LIST;
 		} else {
 
 			let command = data["command"];
 			let args = data["args"];
 			let button = args["button"] || 0;
-			let device = await get_device_by_name(data.device);
 			let buttons = device.buttons.find(el => el.id == button);
 			let cmd = JSON.stringify(command ? buttons[command] : data);
 
@@ -406,8 +426,12 @@ const broadcast = (data) => {
 
 (main = async () => {
 	try {
+		
+		//db.defaults({ rooms: [], scenes: [], automations: [], devices: [] }).write()
+		
+		//db.get("devices").push({ id: 1, title: 'lowdb is awesome' }).write();
 
-		db_events = new TinyDB("./data/events.json");
+/*		db_events = new TinyDB("./data/events.json");
 		db_events.onReady = () => {
 			console.log("db_events is ready");
 			//db_events.appendItem(new M_Event("status", "root", "run", 0, unixtime()));
@@ -421,24 +445,67 @@ const broadcast = (data) => {
 			console.log("db_automations is ready");
 			//db_automations._data["data"].forEach(el => el.executed = false);
 			//db_automations.flush();
+			
+			db_automations._data["data"].forEach(el => {
+				db.get("automations").push({
+					id: el.id,
+					name: el.name,
+					device: el.for,
+					command: {device: el.command.to, data: el.command.data},
+					exec: el.executed,
+					exec_after_timeout: el.executed_after_timeout
+				});
+			});
 		}
 
 		db_scenes = new TinyDB("./data/scenes.json");
 		db_scenes.onReady = () => {
 			console.log("db_scenes is ready");
+
+			db_scenes._data["data"].forEach(el => {
+				db.get("scenes").push({
+					id: el.id,
+					name: el.name,
+					button: el.button,
+					icons: el.icons
+				});
+			});
 		}
 
 		db_rooms = new TinyDB("./data/rooms.json");
 		db_rooms.onReady = () => {
 			console.log("db_rooms is ready");
+
+			db_rooms._data["data"].forEach(el => {
+				db.get("rooms").push({
+					id: el.id,
+					name: el.name,
+					icons: el.icons,
+					scene: el.scene,
+					elements: el.elements || [],
+				});
+			});
 		}
 
 		db_devices = new TinyDB("./data/devices.json");
 		db_devices.onReady = () => {
 			console.log("db_events is ready");
+			
+			db_devices._data["data"].forEach(el => {
+				db.get("devices").push({
+					id: el.id,
+					name: el.name,
+					type: el.type,
+					ip: el.ip,
+					port: el.port,
+					buttons: el.buttons || [],
+				});
+			});
 		}
+		*/
 
 		setInterval(async () => {
+			return;
 
 			/*
 			   websocket.clients.forEach( async (client) => {
