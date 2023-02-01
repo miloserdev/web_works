@@ -17,6 +17,8 @@ html, body {
 
 * {
 	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
 }
 
 block {
@@ -346,13 +348,38 @@ card[status="unknown"] {
 }
 
 
-
-cards>card>h1 {
-        font-size: 1.1em;
+cards>card>.fa {
+        font-size: 1.6em !important;;
+	font-weight: normal;
         position: absolute;
         top: 15px;
         left: 15px;
         word-break: break-word;
+        z-index: 2;
+	background: #ffffff42;
+	padding: 15px;
+	border-radius: 90px;
+        width: fit-content;
+        height: fit-content;
+}
+
+cards>card>h1 {
+        font-size: 1.1em;
+        position: absolute;
+        bottom: 35px;
+        left: 15px;
+        word-break: break-word;
+        z-index: 2;
+}
+
+cards>card>h3 {
+        font-size: 0.9em;
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        word-break: break-word;
+        z-index: 2;
+        color: #ffffff6b;
 }
 
 

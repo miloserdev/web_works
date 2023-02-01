@@ -33,7 +33,7 @@
 
 
 
-	const host = "192.168.1.69";
+	const host = "localhost";
 	const port = "8092";
 
 
@@ -190,7 +190,6 @@
 		console.log("process", data);
 
 		let device = await get_device_by_name(data.device);
-		console.log("IFDEVICE", device);
 
 		let _ret = [];
 		_ret["device"] = data["device"];

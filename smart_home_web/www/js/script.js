@@ -88,6 +88,7 @@ const set_room = (room_id) => {
 					normal="" status="">
 					<i class="fa fa-lamp"></i>
 					<h1>${el.id}</h1>
+					<h3>${el.device}</h3>
 				</card>`;
 		});
 

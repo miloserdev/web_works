@@ -297,11 +297,20 @@ cards>card>.fa {
 cards>card>h1 {
         font-size: 1.1em;
         position: absolute;
-        top: 15px;
+        bottom: 35px;
         left: 15px;
         word-break: break-word;
         z-index: 2;
-	color: transparent;
+}
+
+cards>card>h3 {
+        font-size: 0.9em;
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        word-break: break-word;
+        z-index: 2;
+        color: #ffffff6b;
 }
 
 container {
