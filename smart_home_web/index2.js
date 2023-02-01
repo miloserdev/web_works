@@ -414,6 +414,28 @@ const post_listener = async (req, res, query) => {
 	}
 };
 
+/*
+	const requestListener = async (req, res) => {
+
+		let starts = performance.now();
+
+		req.domain = "";
+		let domain = req.headers.host.split(".");
+		domain.pop();
+		domain = domain.join('.');
+		req.domain = domain;
+
+		const query = url.parse(req.url, true);
+		let x = await (req.method == "GET" ?
+			get_listener(req, res, query) :
+			post_listener(req, res, query));
+
+		let ends = performance.now();
+		console.log(`${req.socket.remoteAddress}:${req.socket.remotePort} -> ${req.method} '${req.url}' | time ${ends-starts}`);
+		return x;
+	};
+*/
+
 
 const requestListener = async (req, res) => {
 
