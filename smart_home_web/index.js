@@ -185,14 +185,10 @@ const get_rooms = async () =>
 
 const get_room_by_id = async (room_id) =>
 	room_id ?
-	db_rooms.find({
-		id: room_id
-	}, async (err, item) =>
-		!err ? item[0] : {
-			"error": err
-		}) : {
-		"error": "no room_id parameter"
-	};
+		db.get("rooms").find({
+			id: room_id
+		}).value() || null
+	: { error: "no room_id arg"}
 
 
 
@@ -343,17 +339,11 @@ const ws_handler = async (client) => {
 
 
 
-const get_listener = async (req, res, query) => {
-
-	query.href = query.href == "/" ? "index.html" : query.href;
-	fs.readFile(__dirname + (req.domain == "v2" ? "/www2/" : "/www/") + query.href, async (err, fd) => {
-
-		if (err) await not_found(res);
-
-		res.writeHead(200);
-		res.end(fd);
-	});
-};
+const get_listener = async (req, res, query) =>
+	((href = query.href == "/" ? "index.html" : query.href) =>
+		fs.readFile(__dirname + (req.domain == "v2" ?
+		"/www2/" : "/www/") + href, async (err, fd) =>
+			err ? await not_found(res) : res.writeHead(200).end(fd) ))();
 
 const not_found = async (res, json = false) => 
 	json ? res.setHeader('Content-Type', 'application/json')
@@ -381,7 +371,7 @@ const post_listener = async (req, res, query) => {
 
 	try {
 		var body = '';
-		req.on('data', async function(data) {
+		req.on('data', async (data) => {
 			try {
 				body += data;
 				// 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
@@ -394,7 +384,7 @@ const post_listener = async (req, res, query) => {
 			}
 		});
 
-		req.on('end', async function() {
+		req.on('end', async () => {
 			try {
 				//var POST = qs.parse(body);
 				var obj = JSON.parse(body);
@@ -412,20 +402,14 @@ const post_listener = async (req, res, query) => {
 
 
 const requestListener = async (req, res) => {
+	
+	let starts = performance.now();
 
 	req.domain = "";
-
 	let domain = req.headers.host.split(".");
 	domain.pop();
 	domain = domain.join('.');
-
-	console.log({
-		domain: domain
-	});
-
-	req.domain = domain;
-
-	let starts = performance.now();
+	req.domain = domain;	
 
 	const query = url.parse(req.url, true);
 	let x = await (req.method == "GET" ?
@@ -437,15 +421,25 @@ const requestListener = async (req, res) => {
 	return x;
 };
 
-
-function normaltime(time) {
+/*
+function normaltime2() {
 	let now = new Date(Date.now());
 	let h = now.getHours()
 	let m = now.getMinutes();
 	let s = now.getSeconds();
 	return `${h >= 10 ? h : "0" + h }:${m >= 10 ? m : "0" + m}:${s >= 10 ? s : "0" + s}`
-	return now;
 }
+*/
+
+const normaltime = (now = new Date(Date.now())) =>
+		((h = now.getHours(),
+			m = now.getMinutes(),
+			s = now.getSeconds()) =>
+				`${h >= 10 ? h 
+				: "0" + h}:${m >= 10 ? m 
+				: "0" + m}:${s >= 10 ?  s 
+				: "0" + s}`)()
+		
 
 
 const broadcast = (data) =>
@@ -456,99 +450,18 @@ const broadcast = (data) =>
 (main = async () => {
 	try {
 		
-		//db.defaults({ rooms: [], scenes: [], automations: [], devices: [] }).write()
-		
-		//db.get("devices").push({ id: 1, title: 'lowdb is awesome' }).write();
-
-/*		db_events = new TinyDB("./data/events.json");
-		db_events.onReady = () => {
-			console.log("db_events is ready");
-			//db_events.appendItem(new M_Event("status", "root", "run", 0, unixtime()));
-			//db_events.flush();
-		}
-
-		// const asd = require("./data.json");
-
-		db_automations = new TinyDB("./data/automations.json");
-		db_automations.onReady = () => {
-			console.log("db_automations is ready");
-			//db_automations._data["data"].forEach(el => el.executed = false);
-			//db_automations.flush();
-			
-			db_automations._data["data"].forEach(el => {
-				db.get("automations").push({
-					id: el.id,
-					name: el.name,
-					device: el.for,
-					command: {device: el.command.to, data: el.command.data},
-					exec: el.executed,
-					exec_after_timeout: el.executed_after_timeout
-				});
-			});
-		}
-
-		db_scenes = new TinyDB("./data/scenes.json");
-		db_scenes.onReady = () => {
-			console.log("db_scenes is ready");
-
-			db_scenes._data["data"].forEach(el => {
-				db.get("scenes").push({
-					id: el.id,
-					name: el.name,
-					button: el.button,
-					icons: el.icons
-				});
-			});
-		}
-
-		db_rooms = new TinyDB("./data/rooms.json");
-		db_rooms.onReady = () => {
-			console.log("db_rooms is ready");
-
-			db_rooms._data["data"].forEach(el => {
-				db.get("rooms").push({
-					id: el.id,
-					name: el.name,
-					icons: el.icons,
-					scene: el.scene,
-					elements: el.elements || [],
-				});
-			});
-		}
-
-		db_devices = new TinyDB("./data/devices.json");
-		db_devices.onReady = () => {
-			console.log("db_events is ready");
-			
-			db_devices._data["data"].forEach(el => {
-				db.get("devices").push({
-					id: el.id,
-					name: el.name,
-					type: el.type,
-					ip: el.ip,
-					port: el.port,
-					buttons: el.buttons || [],
-				});
-			});
-		}
+		// WHEN HACKERS ATTACK JUST UNCOMMENT;
+		/*
+		db.defaults({
+			rooms: [],
+			scenes: [], 
+			automations: [],
+			devices: []
+		}).write();
 		*/
-
 		setInterval(async () => {
-			return;
 
-			/*
-			   websocket.clients.forEach( async (client) => {
-			       const data = JSON.stringify(
-							{'type': 'time',
-			       			'time': new Date().toTimeString(),
-			       			"clients": websocket.clients,
-			       			});
-			       client.send(data);
-			   });
-			*/
-			//check for updates;
-
-			let autos = db_automations._data["data"].forEach(async (el) => {
+			let autos = db.get("automations").value().forEach(async (el) => {
 
 				if (el?.trigger?.startsWith("time")) {
 					let now = normaltime();
@@ -560,11 +473,11 @@ const broadcast = (data) =>
 
 					if (now.startsWith(time) || el.exec_after_timeout) {
 						el.executed = true;
-						db_automations.flush();
+						//db_automations.flush();
 
 						setTimeout(async () => {
 							el.executed = false;
-							db_automations.flush();
+							//db_automations.flush();
 						}, ((60 * 60) * 1000) * 12 /* 12h */ );
 
 						let devs = await get_device_by_name(el.for);
@@ -596,8 +509,8 @@ const broadcast = (data) =>
 		});
 		websocket = new WebSocket.Server({
 			port: 8093
-		});
-		websocket.on("connection", ws_handler);
+		}, () => websocket.on("connection", ws_handler));
+		
 	} catch (e) {
 		console.log(c.col_err("error occured\n"), e);
 		setTimeout(() => main(), 1000);
