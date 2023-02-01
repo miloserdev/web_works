@@ -102,30 +102,20 @@ const set_scene = async (room_id, scene_) => {
 
 const get_automations = async () =>
 	db.get("automations").value() || {
-		"error": "no automations found"
-	};
+		"error": "no automations found" };
+
 const get_automation_by_id = async (item_id) =>
 	item_id ?
 		db.get("automations").find({
 			id: item_id
 		}).value() || null
-	: { error: "no item_id arg"}
-/*
-	item_id ?
-	db_automations.find({
-		id: item_id
-	}, async (err, item) =>
-		!err ? item[0] : {
-			"error": err
-		}) : {
-		"error": "no item_id parameter"
-	};
-*/
+	: { error: "no item_id arg"};
 
 const set_automation = async (item_id, item_name, for_device, trigger, command) => {
 	let resp;
 
-	if (!item_id || !item_name || !for_device || !trigger || !command) {
+	if (!item_id || !item_name ||
+		!for_device || !trigger || !command) {
 		return {
 			"error": "no item_name || item_id || for_ || trigger_ || command_ parameter"
 		};
@@ -141,20 +131,9 @@ const set_automation = async (item_id, item_name, for_device, trigger, command) 
 			command: command
 		};
 	
-	//let item = db_automations._data["data"].find((el) => el.id == item_id);
 	if (!item) {
 		
 		autos.push(datas).write();
-		
-		/*
-		db_automations.appendItem({
-			id: item_id,
-			name: item_name,
-			for: for_device,
-			trigger: trigger,
-			command: command
-		});
-		*/
 		
 		resp = {
 			"response": "OK",
@@ -180,15 +159,16 @@ const set_automation = async (item_id, item_name, for_device, trigger, command) 
 
 const get_rooms = async () =>
 	db.get("rooms").value() || {
-		"error": "no rooms found"
-	};
+		"error": "no rooms found" };
 
 const get_room_by_id = async (room_id) =>
 	room_id ?
 		db.get("rooms").find({
 			id: room_id
 		}).value() || null
-	: { error: "no room_id arg"}
+	: { error: "no room_id arg" };
+
+
 
 
 
@@ -201,7 +181,6 @@ const process = async (data) => {
 
 	let _ret = [];
 	_ret["device"] = data["device"];
-	//_ret["device"] = data["device"];
 
 	try {
 
@@ -349,22 +328,7 @@ const not_found = async (res, json = false) =>
 	json ? res.setHeader('Content-Type', 'application/json')
 			.end(JSON.stringify({ "error": "404" }))
 		: res.writeHead(404).end("not found");
-/*
-const not_found2 = async (res, json = false) => {
 
-	if (json) {
-		res.setHeader('Content-Type', 'application/json');
-		res.end(JSON.stringify({
-			"error": "404"
-		}));
-	} else {
-		res.writeHead(404);
-		res.end("not found");
-	}
-
-	console.log("not found");
-};
-*/
 
 
 const post_listener = async (req, res, query) => {
@@ -421,15 +385,19 @@ const requestListener = async (req, res) => {
 	return x;
 };
 
-/*
-function normaltime2() {
-	let now = new Date(Date.now());
-	let h = now.getHours()
-	let m = now.getMinutes();
-	let s = now.getSeconds();
-	return `${h >= 10 ? h : "0" + h }:${m >= 10 ? m : "0" + m}:${s >= 10 ? s : "0" + s}`
-}
-*/
+
+// JUST 4 FUN;
+const requestListener_arrow = async (req, res) =>
+	( ( _ret = [
+		req["domain"] = "",
+		domain = req.headers.host.split("."),
+		domain.pop(),
+		req.domain = domain.join()
+	], query = url.parse(req.url, true)
+	) => (req.method == "GET" ?
+		get_listener(req, res, query) :
+		post_listener(req, res, query)
+	))();
 
 const normaltime = (now = new Date(Date.now())) =>
 		((h = now.getHours(),
@@ -489,11 +457,9 @@ const broadcast = (data) =>
 								data: JSON.stringify(devs.buttons[0][el.command])
 							});
 						}
-
 					}
 				}
 			});
-
 		}, 1000);
 
 		//setTimeout(() => change_scene("room_2", "asd"), 1000);
@@ -503,7 +469,7 @@ const broadcast = (data) =>
 			cert: fs.readFileSync('./keys/privkey.pem')
 		};
 
-		const server = http.createServer(options, requestListener);
+		const server = http.createServer(options, requestListener_arrow);
 		server.listen(port, host, () => {
 			console.log(`Server is running on http://${host}:${port}`);
 		});
