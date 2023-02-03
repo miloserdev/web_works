@@ -187,7 +187,7 @@
 
 
 	const process = async (data) => {
-		console.log("process", data);
+		// console.log("process", data);
 
 		let device = await get_device_by_name(data.device);
 
@@ -290,7 +290,7 @@
 					broadcast(_ret);
 
 				} catch (e) {
-					console.log(e);
+					// console.log(e);
 					_ret = {
 						device: data.device,
 						item: item,
@@ -306,7 +306,7 @@
 			}
 
 		} catch (e) {
-			console.log("error", e);
+			// console.log("error", e);
 		}
 
 		return _ret;
@@ -317,14 +317,14 @@
 
 	const ws_handler = async (client) => {
 
-		console.log(`${client.host} connected`);
+		// console.log(`${client.host} connected`);
 
 		broadcast({
 			"log": "new client"
 		})
 
 		client.on("message", async (message) => {
-			console.log(`${client.host} -> ${message}`);
+			// console.log(`${client.host} -> ${message}`);
 
 			var data = JSON.parse(await message);
 
@@ -336,11 +336,11 @@
 		});
 
 		client.on("disconnect", async () => {
-			console.log(`${client.host} disconnected`);
+			// console.log(`${client.host} disconnected`);
 		});
 
 		client.on("close", async (client) => {
-			console.log(`${client.host} unhandled close`);
+			// console.log(`${client.host} unhandled close`);
 		});
 	}
 
@@ -375,7 +375,7 @@
 						req.connection.destroy();
 					}
 				} catch (e) {
-					console.log(c.col_err("at req.on(data) "), e)
+					// console.log(c.col_err("at req.on(data) "), e)
 				}
 			});
 
@@ -387,11 +387,11 @@
 					res.setHeader('Content-Type', 'application/json');
 					res.end(JSON.stringify(await process(obj)));
 				} catch (e) {
-					console.log(c.col_err("at req.on(end) "), e);
+					// console.log(c.col_err("at req.on(end) "), e);
 				}
 			});
 		} catch (e) {
-			console.log(c.col_err("at post listener "), e);
+			// console.log(c.col_err("at post listener "), e);
 		}
 	};
 
@@ -437,6 +437,8 @@
 		}).write();
 		*/
 		
+		/*
+		
 		setInterval(async () =>
 			broadcast({ device: "root",
 						item: "door1",
@@ -450,6 +452,8 @@
 						command: "status", 
 						value: `${Math.floor(Math.random() * 20)}` })
 				,5000);
+				
+		*/
 
 		setInterval(async () =>
 			get_devices().then(async devices =>
@@ -463,10 +467,10 @@
 									'Content-Type': 'application/json'
 								},
 								//body: device.
-							}).then(response =>
-							console.log(`Device ${device.name} alive`));
+							}) //.then(response =>
+							// console.log(`Device ${device.name} alive`));
 					} catch (e) {
-						console.log(`Device ${device.name} dead`)
+						// console.log(`Device ${device.name} dead`)
 						broadcast({ device: device.name,
 									command: "status", 
 									value: "dead" });
@@ -481,7 +485,7 @@
 					let now = normaltime();
 					let time = el.trigger.split("time=")[1];
 
-					//console.log(time, normaltime());
+					//// console.log(time, normaltime());
 
 					if (el.executed) return;
 

@@ -105,7 +105,7 @@ const set_room = (room_id) => {
 							status=""
 							_device="${el.device}"
 							_item="${el.item}">
-						<i class="${ el.icons?.[0] }"></i>
+						<i class="${ el.icons?.[0] || "fa fa-light-switch" }"></i>
 						${ el.type.includes("sensor") ?
 						`<h2></h2>`
 						: `` }
@@ -122,11 +122,10 @@ const set_room = (room_id) => {
 			if (d || !d) {
 				let els = cards.querySelector(`card[id="${el.id}"][_type*="button"]`);
 				//cards.querySelector(`card[id="button_1"][class*="button"]`)
-				els.onclick = (e) => {
+				els ? els.onclick = (e) => {
 					console.log(`push item ${el.id} > ${el.item} of ${d.name}`);
 	
 					let cmd = els.attributes.status.value == "on" ? "turn_off" : "turn_on";
-					console.log("types", cmd);
 	
 					sends({
 						"device": el["device"],
@@ -136,10 +135,9 @@ const set_room = (room_id) => {
 							"item": el["item"]
 						}
 					}, e => {
-						console.log("card click", e, "value", e.value);
 						els.attributes.status.value = e.value;
 					});
-				}
+				} : null;
 			} else {
 				console.error("element not found");
 			}
@@ -199,13 +197,11 @@ const process = (message) => {
 	// json["command"] ? null : json["command"] = "status";
 
 	// Now hardcoded, sorry
-	json.item = json.item ? json.item : json.pin;
+	json.item = json.item ? json.item : json.pin || 0;
 	let rm = cards.querySelector(`card[_device="${json.device}"][_item="${json.item}"]`);
 	if (rm) {
-		console.log(`========${json.device}_${json.pin}`, rm)
 		rm.attributes.status.value = json.value;
 	}
-	
 	
 	switch (command) {
 
@@ -308,10 +304,9 @@ const process = (message) => {
 		}
 	}
 
-	document.querySelectorAll(`card[_device="${json.device}"][_item="${json.item}"]`).forEach(e => {
-		console.log('naiden 2', e);
-		e.attributes.status.value = json.value;
-	});
+	//document.querySelectorAll(`card[_device="${json.device}"][_item="${json.item}"]`).forEach(e => {
+	//	e.attributes.status.value = json.value;
+	//});
 
 }
 
@@ -322,17 +317,15 @@ const init_websock = () => {
 
 	websock.onopen = () => {
 		console.log('websocket connected');
-		clearInterval(reconnect_timer);
 	};
+	
+	websock.onerror = () => websock.close();
 
 	websock.onmessage = process;
 
 	websock.onclose = () => {
 		console.log("websocket closed, reconnecting");
-		reconnect_timer = setInterval(() =>
-			websock.CONNECTED ?
-			clearInterval(reconnect_timer) :
-			/*init_websock() */ null, 5000);
+		setTimeout(() => init_websock(), 2000);
 	}
 }
 
