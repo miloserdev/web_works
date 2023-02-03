@@ -437,23 +437,28 @@
 		}).write();
 		*/
 		
-		/*
+		setInterval(async () =>
+			broadcast({ device: "root",
+						item: "door2",
+						command: "status", 
+						value: `${Math.floor(Math.random() * 2)}` })
+				,500);
 		
 		setInterval(async () =>
 			broadcast({ device: "root",
 						item: "door1",
 						command: "status", 
 						value: `${Math.floor(Math.random() * 2)}` })
-				,1000);	
+				,1000);
 		
 		setInterval(async () =>
 			broadcast({ device: "root",
 						item: "humd1",
 						command: "status", 
-						value: `${Math.floor(Math.random() * 20)}` })
-				,5000);
+						value: `${Math.floor(Math.random() * 200)}` })
+				,100);
 				
-		*/
+		
 
 		setInterval(async () =>
 			get_devices().then(async devices =>

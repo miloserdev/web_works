@@ -39,16 +39,13 @@
           "icons": { "0": "fa fa-door-closed", "1": "fa fa-door-open" }
         },
         {
-          "id": "door_indicator_1",
+          "id": "door_indicator_2",
           "type": "mini sensor binary",
           "device": "root",
-          "item": "door1",
+          "item": "door2",
           "values": { "0": "Closed", "1": "Open" },
           "icons": { "0": "fa fa-door-closed", "1": "fa fa-door-open" }
         }
-        
-        
-        
       ]
     },
     {
@@ -182,6 +179,10 @@
   		"items": [
   			{
   				"id": "door1",
+  				"type": "phantom"
+  			},
+  			{
+  				"id": "door2",
   				"type": "phantom"
   			}
   		]

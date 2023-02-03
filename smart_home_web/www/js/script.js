@@ -191,8 +191,7 @@ const process = (message) => {
 	let json = JSON.parse(message.data);
 	let command = json["command"];
 
-	console[json["error"] ? "error" : "log"]
-		("from websocket ->", json);
+	json.error ? console.log("websocket ->", json.error) : null;
 		
 	// json["command"] ? null : json["command"] = "status";
 
