@@ -191,7 +191,7 @@
 
 		let device = await get_device_by_name(data.device);
 
-		let _ret = [];
+		let _ret = {};
 		_ret["device"] = data["device"];
 
 		try {
@@ -203,15 +203,6 @@
 				let args = data["args"];
 
 				switch (command) {
-					
-					case "status": {
-						_ret = {
-							"device": "root",
-							"command": "status",
-							"value": 111.1
-						}
-						break;
-					}
 
 					case "get_devices": {
 						_ret = await get_devices();
@@ -262,6 +253,8 @@
 						break;
 					}
 				}
+				
+				return _ret;
 
 				// IF DEVICE IS OTHER FROM DEVICES LIST;
 			} else {
@@ -273,7 +266,7 @@
 				let cmd = JSON.stringify(command ? items[command] : data);
 
 				try {
-					_ret = await fetch('http://' +
+					const response = await fetch('http://' +
 						device.ip + ':' + device.port, {
 							method: 'POST',
 							headers: {
@@ -281,16 +274,43 @@
 								'Content-Type': 'application/json'
 							},
 							body: cmd
-						})
-
-					_ret = await _ret.json();
+						});
+	
+					var body = await response.text();
+					console.log("wi", body);
+					
+					try {
+						body = JSON.parse(body);
+						_ret = body;
+					} catch (e) {
+						_ret["value"] = body;
+					}
+					
 					_ret["command"] ? null : _ret["command"] = data["command"];
 					_ret["device"] ? null : _ret["device"] = data["device"];
-
+					
+					console.log("wi", _ret);
 					broadcast(_ret);
-
+					
+					return _ret;				
+					
+					/*
+					fetch('http://' +
+						device.ip + ':' + device.port, {
+							method: 'POST',
+							headers: {
+								'Accept': 'application/json',
+								'Content-Type': 'application/json'
+							},
+							body: cmd
+						}).then(async _ret => {
+							_ret = await _ret.text();
+					
+							let _rets;
+						})
+					*/
 				} catch (e) {
-					// console.log(e);
+					console.log(e);
 					_ret = {
 						device: data.device,
 						item: item,
@@ -311,7 +331,16 @@
 
 		return _ret;
 	}
+	
 
+	const json_normalize = (data) => {
+		try {
+			data = JSON.parse(data);
+		} catch (e) {
+			console.log("already json, parse skipped");
+		}
+		return data;
+	}
 
 
 
@@ -398,7 +427,7 @@
 
 	// JUST 4 FUN;
 	const requestListener_arrow = async (req, res) =>
-		((_ret = [
+		await ((_ret = [
 			req["domain"] = "",
 			domain = req.headers.host.split("."),
 			domain.pop(),

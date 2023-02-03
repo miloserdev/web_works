@@ -125,7 +125,7 @@ const set_room = (room_id) => {
 				els ? els.onclick = (e) => {
 					console.log(`push item ${el.id} > ${el.item} of ${d.name}`);
 	
-					let cmd = els.attributes.status.value == "on" ? "turn_off" : "turn_on";
+					let cmd = (els.attributes.status.value == "on" ? "turn_off" : "turn_on") || "turn_off";
 	
 					sends({
 						"device": el["device"],
@@ -163,8 +163,11 @@ const sends = (data, cb) => {
 			},
 			body: JSON.stringify(data)
 		})
-		.then(response => response.json())
-		.then(response => {
+		.then(async response => {
+			//response = await response.text();
+			//console.log("sends response", response);
+			//response = json_normalize(response);
+			response = await response.json();
 			console.log("sends response", response);
 
 			var result = json_normalize(response);
