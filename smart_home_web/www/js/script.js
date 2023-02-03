@@ -27,6 +27,23 @@ let current_room;
 	{"name": "status","type": "command"}
 ]
 
+// device map;
+
+{
+	id: 0,
+	ip: "127.0.0.1",
+	status: 1,			// {0: "dead", 1: "alive"}
+	port: 8081
+	name: "name",
+	items: [
+		{
+			id: 1,
+			type: "0",		// { 0: "normal", 1: "reverse" }
+			values: "0",	// { 0: { 0: 0, 1: 1 } 1: { 0: false, 1: true }, 2: { 0: "off", 1: "on" } }
+		}
+	],
+}
+
 */
 
 
@@ -38,7 +55,7 @@ const update = () => {
 
 		let rm = cards.querySelector(`card[id="${el.id}"]`);
 
-		//let asd = dev.buttons.find(a => a.id == el.button).status;
+		//let asd = dev.items.find(a => a.id == el.button).status;
 		//asd = JSON.stringify(asd);
 		//console.log(asd);
 
@@ -47,7 +64,7 @@ const update = () => {
 			/*"data": `${asd}`*/
 			"command": "status",
 			"args": {
-				"button": el.button
+				"item": el.item
 			}
 		}, e => {
 			console.log("updater", e);
@@ -80,38 +97,51 @@ const set_room = (room_id) => {
 		scene_title.innerText = `Scene: ${ scen }`;
 
 		item.elements.forEach(el => {
-			let d = devices_data.find(f => f.name == el["device"]);
-			console.log(`set button ${el.id} > ${el.button} to ${d.name}`);
-			cards.innerHTML += `
-				<card _button=${el.device}_${el.button}
-					  id="${el.id}"
-					normal="" status="">
-					<i class="fa fa-lamp"></i>
-					<h1>${el.id}</h1>
-					<h3>${el.device}</h3>
-				</card>`;
+			let d = devices_data.find(f => f.name == el["device"]) || "root???";
+			if (d || !d) {
+				console.log(`set item ${el.id} > ${el.item} to ${d.name}`);
+				cards.innerHTML += `
+					<card id="${el.id}" _type="${el.type}"
+							status=""
+							_device="${el.device}"
+							_item="${el.item}">
+						<i class="fa fa-lamp"></i>
+						${ el.type.includes("sensor") ?
+						`<h2>0.0</h2>`
+						: `` }
+						<h1>${el.id}</h1>
+						<h3>${el.device}</h3>
+					</card>`;
+			} else {
+				console.error("element not found");
+			}
 		});
 
 		item.elements.forEach(el => {
 			let d = devices_data.find(f => f.name == el["device"]);
-			let els = cards.querySelector(`card[id="${el.id}"]`);
-			els.onclick = (e) => {
-				console.log(`push button ${el.id} > ${el.button} of ${d.name}`);
-
-				let asd = els.attributes.status.value == "on" ? "turn_off" : "turn_on";
-				console.log("types", asd);
-
-				sends({
-					"device": el["device"],
-					/*"data": `${asd}`*/
-					"command": asd,
-					args: {
-						"button": el["button"]
-					}
-				}, e => {
-					console.log("card click", e, "value", e.value);
-					els.attributes.status.value = e.value;
-				});
+			if (d || !d) {
+				let els = cards.querySelector(`card[id="${el.id}"][_type*="button"]`);
+				//cards.querySelector(`card[id="button_1"][class*="button"]`)
+				els.onclick = (e) => {
+					console.log(`push item ${el.id} > ${el.item} of ${d.name}`);
+	
+					let cmd = els.attributes.status.value == "on" ? "turn_off" : "turn_on";
+					console.log("types", cmd);
+	
+					sends({
+						"device": el["device"],
+						/*"data": `${cmd}`*/
+						"command": cmd,
+						args: {
+							"item": el["item"]
+						}
+					}, e => {
+						console.log("card click", e, "value", e.value);
+						els.attributes.status.value = e.value;
+					});
+				}
+			} else {
+				console.error("element not found");
 			}
 		});
 
@@ -140,7 +170,7 @@ const sends = (data, cb) => {
 			console.log("sends response", response);
 
 			var result = json_normalize(response);
-			result._data = data;
+			//result._data = data;
 			if (response["error"] != undefined) {
 				console.error(response);
 			}
@@ -165,14 +195,18 @@ const process = (message) => {
 
 	console[json["error"] ? "error" : "log"]
 		("from websocket ->", json);
+		
+	// json["command"] ? null : json["command"] = "status";
 
 	// Now hardcoded, sorry
-	let rm = cards.querySelector(`card[_button="${json.device}_${json.pin}"]`);
+	/*
+	let rm = cards.querySelector(`card[_button="${json.device}_${json.button}"]`);
 	if (rm) {
 		console.log(`========${json.device}_${json.pin}`, rm)
 		rm.attributes.status.value = json.value;
 	}
-
+	*/
+	
 	switch (command) {
 
 		/*
@@ -182,6 +216,41 @@ const process = (message) => {
 			rm.attributes.status.value = json.value;
 		}
 		*/
+		
+		case "status": {
+			console.log("status from========", command);
+								 // card[_device="${json.device}"][_item="${json.item}"]
+			cards.querySelectorAll(`card[_type*="button"][_device="${json.device}"][_item="${json.item}"]`).forEach(device => {
+				device.attributes.status.value = json.value;
+			});
+			cards.querySelectorAll(`card[_type*="sensor"][_device="${json.device}"][_item="${json.item}"]`).forEach(device => {
+				device.children[1].innerText = json.value;
+				let room = rooms_data.find(f => f.id == current_room);
+				let dev =
+					room.elements ?
+						room.elements.find(f =>
+							f.device == json.device && 
+							f.item == json.item)
+						|| null
+					: null;
+				/*
+				let dev =
+					room.elements ?
+						room.elements.find(f =>
+							f.id == device.attributes.id.value)
+						|| null
+					: null;
+				*/
+				console.log("AND IT IS", dev);
+				dev ? 
+					device.children[0].attributes.class.value =
+						dev.icons ?
+							dev.icons[json.value] || dev.icons[0]
+						: null
+				: null;
+			});
+			break;
+		}
 
 		case "get_devices": {
 			devices_data = json;
@@ -237,7 +306,7 @@ const process = (message) => {
 		}
 	}
 
-	document.querySelectorAll(`card[_button="${json.from}_${json.pin}"]`).forEach(e => {
+	document.querySelectorAll(`card[_device="${json.device}"][_item="${json.item}"]`).forEach(e => {
 		console.log('naiden 2', e);
 		e.attributes.status.value = json.value;
 	});
@@ -282,25 +351,25 @@ const init_app = async () => {
 
 		if (!automations_holder) return;
 
-		automations.forEach((item) => {
-			console.log("auto", item);
-			let icons = item["icons"];
+		automations.forEach((auto) => {
+			console.log("auto", auto);
+			let icons = auto["icons"];
 			if (icons) icons = icons.map(e => `<i class="${e}"></i>`).join('');
 
 			automations_holder.innerHTML +=
-				`<round_holder flat id="automation_${item.id}">
+				`<round_holder flat id="automation_${auto.id}">
 						<round_push flat>
-							<a button ${item["button"]}>
-								${item.name}
+							<a button ${auto["item"]}>
+								${auto.name}
 							</a>
-							<h4>${item.for}</h4><h4 style="color: #6c757d">${item.trigger}</h4>
+							<h4>${auto.for}</h4><h4 style="color: #6c757d">${auto.trigger}</h4>
 						</round_push>
 					</round_holder>`;
 		});
 
-		automations.forEach((item) => {
-			let t = document.getElementById("automation_" + item.id);
-			t.onclick = (e) => open_automation(item.id);
+		automations.forEach((auto) => {
+			let t = document.getElementById("automation_" + auto.id);
+			t.onclick = (e) => open_automation(auto.id);
 
 		});
 	});
@@ -314,31 +383,31 @@ const init_app = async () => {
 
 		if (!scenes_holder) return;
 
-		scenes.forEach((item) => {
-			let icons = item["icons"]
+		scenes.forEach((scene) => {
+			let icons = scene["icons"]
 				.map(e => `<i class="${e}"></i>`).join('');
 
 			scenes_holder.innerHTML +=
-				`<round_holder id="${item.id}">
+				`<round_holder id="${scene.id}">
 						<round_push>
-							<a button ${item["button"]}>
+							<a button ${scene["button"]}>
 								${icons}
 							</a>
 						</round_push>
-						<h4>${item.name}</h4>
+						<h4>${scene.name}</h4>
 					</round_holder>`;
 		});
 
-		scenes.forEach((item) => {
-			console.log(item);
-			let s = document.getElementById(item.id);
+		scenes.forEach((scene) => {
+			console.log(scene);
+			let s = document.getElementById(scene.id);
 			s.onclick = (e) => {
-				scene_title.innerText = `Scene: ${item.name}`;
+				scene_title.innerText = `Scene: ${scene.name}`;
 				sends({
 					"command": "set_scene",
 					"args": {
 						"room_id": current_room,
-						"scene": item.id
+						"scene": scene.id
 					}
 				}, (e) => console.log(e));
 			}
@@ -350,22 +419,22 @@ const init_app = async () => {
 	}, (rooms) => {
 		rooms_data = rooms;
 
-		rooms.forEach((item) => {
+		rooms.forEach((room) => {
 			let icons =
-				item["icons"].map(e => `<i class="${e}"></i>`).join('');
+				room["icons"].map(e => `<i class="${e}"></i>`).join('');
 
 			rooms_holder.innerHTML +=
-				`<a button etc id="${item.id}">
+				`<a button etc id="${room.id}">
 						${icons}
-					</i>${item.name}</a>`;
+					</i>${room.name}</a>`;
 		});
 
 		current_room = rooms[0].id;
 		set_room(current_room);
 
-		rooms.forEach((item) => {
-			let t = document.getElementById(item.id);
-			t.onclick = (e) => current_room != item.id ? set_room(item.id) : null;
+		rooms.forEach((room) => {
+			let t = document.getElementById(room.id);
+			t.onclick = (e) => current_room != room.id ? set_room(room.id) : null;
 
 		});
 	});

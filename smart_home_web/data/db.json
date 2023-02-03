@@ -10,14 +10,34 @@
       "elements": [
         {
           "id": "button_1",
+          "type": "big button",
           "device": "relay_array_1",
-          "button": "33"
+          "item": "33"
         },
         {
           "id": "button_2",
+          "type": "normal button",
           "device": "esp01_relay",
-          "button": "0"
+          "item": "0"
+        },
+        
+        {
+          "id": "humidity_sensor_1",
+          "type": "big sensor",
+          "device": "root",
+          "item": "humd1",
+          "icons": { "0": "fa fa-temperature-low" }
+        },
+        {
+          "id": "door_indicator_1",
+          "type": "normal sensor",
+          "device": "root",
+          "item": "door1",
+          "values": { "closed": "0", "open": "1" },
+          "icons": { "0": "fa fa-door-closed", "1": "fa fa-door-open" }
         }
+        
+        
       ]
     },
     {
@@ -142,13 +162,26 @@
     }
   ],
   "devices": [
+  	{
+  		"id": 0,
+  		"name": "root",
+  		"type": "bridge",
+  		"ip": "localhost",
+  		"port": 8092,
+  		"items": [
+  			{
+  				"id": "door1",
+  				"type": "phantom"
+  			}
+  		]
+  	},
     {
       "id": 2,
       "name": "esp01_relay",
       "type": "switch",
       "ip": "192.168.1.101",
       "port": 8081,
-      "buttons": [
+      "items": [
         {
           "id": 0,
           "turn_on": [
@@ -175,7 +208,7 @@
       "type": "switch",
       "ip": "192.168.1.65",
       "port": 8081,
-      "buttons": [
+      "items": [
         {
           "id": 32,
           "turn_on": [

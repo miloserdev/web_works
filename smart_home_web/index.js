@@ -203,49 +203,63 @@
 				let args = data["args"];
 
 				switch (command) {
+					
+					case "status": {
+						_ret = {
+							"device": "root",
+							"command": "status",
+							"value": 111.1
+						}
+						break;
+					}
 
 					case "get_devices": {
-						return await get_devices();
+						_ret = await get_devices();
+						break;
 					}
 
 					case "get_automations": {
-						return await get_automations();
+						_ret = await get_automations();
+						break;
 					}
 					case "get_automation": {
-						return await get_automation_by_id(
+						_ret = await get_automation_by_id(
 							data["get_automation"]);
+						break;
 					}
 					case "set_automation": {
-						return await
-						set_automation(
+						_ret = await set_automation(
 							args["id"],
 							args["name"],
 							args["for"],
 							args["trigger"],
 							args["command"]);
+						break;
 					}
 
 					case "get_scenes": {
-						return await get_scenes();
+						_ret = await get_scenes();
+						break;
 					}
 					case "get_scene": {
-						return await
-						get_scene_by_id(args["scene"]);
+						_ret = await get_scene_by_id(args["scene"]);
+						break;
 					}
 					case "set_scene": {
-						return await
-						set_scene(
-							args["room_id"],
-							args["scene"]);
+						_ret = await set_scene(
+								args["room_id"],
+								args["scene"]);
+						break;
 					}
 
 
 					case "get_room": {
-						return await
-						get_room_by_id(args["room_id"]);
+						_ret = await get_room_by_id(args["room_id"]);
+						break;
 					}
 					case "get_rooms": {
-						return await get_rooms();
+						_ret = await get_rooms();
+						break;
 					}
 				}
 
@@ -254,9 +268,9 @@
 
 				let command = data["command"];
 				let args = data["args"];
-				let button = args["button"] || 0;
-				let buttons = device.buttons.find(el => el.id == button);
-				let cmd = JSON.stringify(command ? buttons[command] : data);
+				let item = args["item"] || 0;
+				let items = device.items.find(el => el.id == item);
+				let cmd = JSON.stringify(command ? items[command] : data);
 
 				try {
 					_ret = await fetch('http://' +
@@ -273,18 +287,21 @@
 					_ret["command"] ? null : _ret["command"] = data["command"];
 					_ret["device"] ? null : _ret["device"] = data["device"];
 
+					broadcast(_ret);
+
 				} catch (e) {
 					console.log(e);
-					broadcast({
-						from: data.device,
-						pin: button,
-						value: "unknown",
+					_ret = {
+						device: data.device,
+						item: item,
+						value: "dead",
 						error: {
 							errno: e.cause.errno,
 							code: e.cause.code
 						}
-					});
-					return e;
+					};
+					broadcast(_ret);
+					return _ret;
 				}
 			}
 
@@ -292,7 +309,7 @@
 			console.log("error", e);
 		}
 
-		broadcast(_ret);
+		return _ret;
 	}
 
 
@@ -403,8 +420,9 @@
 
 
 	const broadcast = (data) =>
+		websocket ?
 		websocket.clients.forEach(async (client) =>
-			client.send(JSON.stringify(data)));
+			client.send(JSON.stringify(data))) : null;
 
 
 	try {
@@ -418,6 +436,20 @@
 			devices: []
 		}).write();
 		*/
+		
+		setInterval(async () =>
+			broadcast({ device: "root",
+						item: "door1",
+						command: "status", 
+						value: `${Math.floor(Math.random() * 2)}` })
+				,1000);	
+		
+		setInterval(async () =>
+			broadcast({ device: "root",
+						item: "humd1",
+						command: "status", 
+						value: `${Math.random()}` })
+				,5000);
 
 		setInterval(async () =>
 			get_devices().then(async devices =>
@@ -435,6 +467,9 @@
 							console.log(`Device ${device.name} alive`));
 					} catch (e) {
 						console.log(`Device ${device.name} dead`)
+						broadcast({ device: device.name,
+									command: "status", 
+									value: "dead" });
 					}
 				})), 65535);
 
@@ -465,7 +500,7 @@
 
 							process(null, null, {
 								to: el.for,
-								data: JSON.stringify(devs.buttons[0][el.command])
+								data: JSON.stringify(devs.items[0][el.command])
 							});
 						}
 					}

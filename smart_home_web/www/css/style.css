@@ -181,8 +181,8 @@ padding: 5px;
 
 
 card {
-min-width: 100%;
-min-height: 100%;
+min-width: 150px;
+min-height: 150px;
 display: grid;
 align-items: center;
 justify-content: center;
@@ -209,12 +209,13 @@ card::before {
 	display: none;
 }
 
-card[big] {
-width: 300px;
+card[_type*="big"] {
+width: 320px;
   grid-column: auto / span 2;
+  #grid-column: 1 / span 2; maybe
 }
 
-card[large] {
+card[_type*="large"] {
 width: 300px;
   grid-column: auto / span 2;
   grid-row: auto / span 2;
@@ -254,14 +255,30 @@ card[status="unknown"] > .fa {
 	background: #fdd32e;
 }
 
-card[large] > img {
-position: absolute;
-bottom: 15px;
-right: 15px;
-width: 60%;
+
+@keyframes error {
+  from {
+    background: #fa2a42;
+  }
+
+  to {
+    background: #292929;
+  }
 }
 
-card[normal] > img {
+card[status="dead"] {
+	border: 2px solid #fa2a42;
+}
+card[status="dead"]:befores {
+	background: #fdd32e;
+	animation: 3s infinite alternate error;
+}
+card[status="dead"] > .fa {
+	background: #fa2a42;
+	animation: 1.5s infinite error;
+}
+
+card[_type*="normal"] > img {
 position: absolute;
 bottom: 15px;
 right: 15px;
@@ -269,13 +286,20 @@ width: 35%;
 z-index: 1;
 }
 
-card[big] > img {
+card[_type*="big"] > img {
 position: absolute;
 bottom: 15px;
 right: 15px;
 width: 25%;
 z-index: 1;
 /*! bottom: 0; */
+}
+
+card[_type*="large"] > img {
+position: absolute;
+bottom: 15px;
+right: 15px;
+width: 60%;
 }
 
 
@@ -299,7 +323,37 @@ cards>card>h1 {
         position: absolute;
         bottom: 35px;
         left: 15px;
-        word-break: break-word;
+        word-break: none;
+        z-index: 2;
+}
+
+cards>card[_type*=normal]>h2 {
+	      display: grid;
+        font-size: 1.3em;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+	      width: 50px;
+	      height: 50px;
+	       place-content: center;
+        word-break: none;
+        z-index: 2;
+}
+
+cards>card[_type*=big]>h2 {
+	      display: grid;
+        font-size: 1.3em;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+	      min-width: 50px;
+	      min-height: 50px;
+	      max-width: 120px;
+	      max-height: 50px;
+	      overflow: hidden;
+	       /*! place-content: center; */
+	   align-content: center;
+        word-break: none;
         z-index: 2;
 }
 
@@ -308,7 +362,7 @@ cards>card>h3 {
         position: absolute;
         bottom: 15px;
         left: 15px;
-        word-break: break-word;
+        word-break: none;
         z-index: 2;
         color: #ffffff6b;
 }
