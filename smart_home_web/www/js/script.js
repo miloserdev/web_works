@@ -105,9 +105,9 @@ const set_room = (room_id) => {
 							status=""
 							_device="${el.device}"
 							_item="${el.item}">
-						<i class="fa fa-lamp"></i>
+						<i class="${ el.icons?.[0] }"></i>
 						${ el.type.includes("sensor") ?
-						`<h2>0.0</h2>`
+						`<h2></h2>`
 						: `` }
 						<h1>${el.id}</h1>
 						<h3>${el.device}</h3>
@@ -199,13 +199,13 @@ const process = (message) => {
 	// json["command"] ? null : json["command"] = "status";
 
 	// Now hardcoded, sorry
-	/*
-	let rm = cards.querySelector(`card[_button="${json.device}_${json.button}"]`);
+	json.item = json.item ? json.item : json.pin;
+	let rm = cards.querySelector(`card[_device="${json.device}"][_item="${json.item}"]`);
 	if (rm) {
 		console.log(`========${json.device}_${json.pin}`, rm)
 		rm.attributes.status.value = json.value;
 	}
-	*/
+	
 	
 	switch (command) {
 
@@ -218,16 +218,8 @@ const process = (message) => {
 		*/
 		
 		case "status": {
-			console.log("status from========", command);
-								 // card[_device="${json.device}"][_item="${json.item}"]
-			cards.querySelectorAll(`card[_type*="button"][_device="${json.device}"][_item="${json.item}"]`).forEach(device => {
-				device.attributes.status.value = json.value;
-			});
-			cards.querySelectorAll(`card[_type*="sensor"][_device="${json.device}"][_item="${json.item}"]`).forEach(device => {
-				device.children[1].innerText = json.value;
-				let room = rooms_data.find(f => f.id == current_room);
-				let dev =
-					room.elements ?
+			let room = rooms_data.find(f => f.id == current_room);
+			let dev = room.elements ?
 						room.elements.find(f =>
 							f.device == json.device && 
 							f.item == json.item)
@@ -241,13 +233,23 @@ const process = (message) => {
 						|| null
 					: null;
 				*/
-				console.log("AND IT IS", dev);
-				dev ? 
+				
+			cards.querySelectorAll(`card[_type*="button"][_device="${json.device}"][_item="${json.item}"]`).forEach(device => {
+				device.attributes.status.value = json.value;
+			});
+			cards.querySelectorAll(`card[_type*="sensor"][_device="${json.device}"][_item="${json.item}"]`).forEach(device => {
+				//device.children[1].innerText = json.value;
+
+				dev ? [
 					device.children[0].attributes.class.value =
 						dev.icons ?
 							dev.icons[json.value] || dev.icons[0]
-						: null
-				: null;
+						: null,
+					device.children[1].innerText = 
+						dev.type.includes("binary") ?
+							dev.values?.[json.value] || json.value
+						: `${json.value} ${dev?.unit}`
+				] : null;
 			});
 			break;
 		}

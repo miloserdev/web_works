@@ -12,7 +12,8 @@
           "id": "button_1",
           "type": "big button",
           "device": "relay_array_1",
-          "item": "33"
+          "item": "33",
+          "icons": { "0": "fa fa-light-switch" }
         },
         {
           "id": "button_2",
@@ -26,16 +27,26 @@
           "type": "big sensor",
           "device": "root",
           "item": "humd1",
-          "icons": { "0": "fa fa-temperature-low" }
+          "unit": "g/m3",
+          "icons": { "0": "fa fa-humidity" }
         },
         {
           "id": "door_indicator_1",
-          "type": "normal sensor",
+          "type": "mini sensor binary",
           "device": "root",
           "item": "door1",
-          "values": { "closed": "0", "open": "1" },
+          "values": { "0": "Closed", "1": "Open" },
+          "icons": { "0": "fa fa-door-closed", "1": "fa fa-door-open" }
+        },
+        {
+          "id": "door_indicator_1",
+          "type": "mini sensor binary",
+          "device": "root",
+          "item": "door1",
+          "values": { "0": "Closed", "1": "Open" },
           "icons": { "0": "fa fa-door-closed", "1": "fa fa-door-open" }
         }
+        
         
         
       ]

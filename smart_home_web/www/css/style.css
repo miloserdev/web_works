@@ -171,9 +171,9 @@ min-width: 6em;
 
 cards {
 display: grid;
-grid-template-columns: repeat(auto-fill, 150px);
-grid-auto-rows: 150px;
-grid-gap: 20px;
+grid-template-columns: repeat(auto-fill, 50px);
+grid-auto-rows: 50px;
+grid-gap: 6px;
 margin: 10px;
 padding: 5px;
 #max-width: 512px;
@@ -181,8 +181,8 @@ padding: 5px;
 
 
 card {
-min-width: 150px;
-min-height: 150px;
+/*! min-width: 75px; */
+/*! min-height: 75px; */
 display: grid;
 align-items: center;
 justify-content: center;
@@ -193,9 +193,43 @@ background: #171717;
 position: relative;
 /*! filter: drop-shadow(10px 10px 10px #d0d0d020); */
 
-padding-top: 35px;
+/*! padding-top: 35px; */
 overflow: hidden;
+	padding: 10px;
+		display: grid;
+  grid-template-areas: 
+    "icon value"
+		". ."
+    "id ."
+    "device ."; 
+	grid-template-columns: auto 1fr;
+	grid-template-rows: auto 1fr auto auto;
 }
+
+
+card > .fa {
+	grid-area: icon;
+	position: relative;
+}
+
+card > h1 {
+	grid-area: id;
+	position: relative;
+	font-size: 0.9em;
+}
+
+card > h2 {
+	grid-area: value;
+	position: relative;
+	font-size: 1em;
+}
+
+card > h3 {
+	grid-area: device;
+	position: relative;
+	font-size: 0.7em;
+}
+
 
 card::before {
 	content: "";
@@ -209,11 +243,49 @@ card::before {
 	display: none;
 }
 
-card[_type*="big"] {
-width: 320px;
-  grid-column: auto / span 2;
-  #grid-column: 1 / span 2; maybe
+card[_type*="mini"] {
+	grid-column: auto / span 2;
+	grid-row: auto / span 1;
+	padding: 0px;
+	grid-template-areas:
+		"icon value";
+	grid-template-columns: 35px 1fr;
+	grid-template-rows: 50px;
+	place-content: center;
+	place-items: center;
 }
+
+card[_type*="mini"] > h2 {
+  font-size: 0.8em;	
+}
+
+card[_type*="mini"] > h1,
+card[_type*="mini"] > h3 {
+	display: none;
+}
+
+card[_type*="mini"] > .fa {
+	font-size: 1em !important;
+	width: unset;
+	height: unset;
+	border-radius: 0;
+	background: none;
+	padding: 0;
+}
+
+card[_type*="normal"] {
+	grid-column: auto / span 2;
+	grid-row: auto / span 2;
+}
+
+card[_type*="big"] {
+#width: 320px;
+  grid-column: auto / span 4;
+  #grid-column: 1 / span 2; maybe
+#grid-row: ;
+grid-row: auto / span 2;
+}
+
 
 card[_type*="large"] {
 width: 300px;
@@ -304,64 +376,50 @@ width: 60%;
 
 
 cards>card>.fa {
-        font-size: 1.6em !important;;
+        font-size: 1.3em !important;;
 	font-weight: normal;
-        position: absolute;
-        top: 15px;
-        left: 15px;
         word-break: break-word;
         z-index: 2;
 	background: #ffffff42;
 	padding: 15px;
 	border-radius: 90px;
-        width: fit-content;
-        height: fit-content;
+        width: 50px;
+        height: 50px;
+        place-content: center;
+        display: grid;
 }
 
 cards>card>h1 {
-        font-size: 1.1em;
-        position: absolute;
-        bottom: 35px;
-        left: 15px;
+        word-break: none;
+        z-index: 2;
+}
+
+cards>card>h2 {
+	      display: grid;
         word-break: none;
         z-index: 2;
 }
 
 cards>card[_type*=normal]>h2 {
-	      display: grid;
-        font-size: 1.3em;
-        position: absolute;
-        top: 15px;
-        right: 15px;
-	      width: 50px;
-	      height: 50px;
-	       place-content: center;
-        word-break: none;
-        z-index: 2;
+	/*! width: 50px; */
+	/*! height: 50px; */
+	place-content: center;
 }
 
 cards>card[_type*=big]>h2 {
-	      display: grid;
-        font-size: 1.3em;
-        position: absolute;
-        top: 15px;
-        right: 15px;
 	      min-width: 50px;
 	      min-height: 50px;
 	      max-width: 120px;
 	      max-height: 50px;
 	      overflow: hidden;
 	       /*! place-content: center; */
-	   align-content: center;
+	     align-content: center;
         word-break: none;
         z-index: 2;
+	      place-self: end;
 }
 
 cards>card>h3 {
-        font-size: 0.9em;
-        position: absolute;
-        bottom: 15px;
-        left: 15px;
         word-break: none;
         z-index: 2;
         color: #ffffff6b;

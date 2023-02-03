@@ -33,7 +33,7 @@
 
 
 
-	const host = "localhost";
+	const host = "192.168.1.69";
 	const port = "8092";
 
 
@@ -448,7 +448,7 @@
 			broadcast({ device: "root",
 						item: "humd1",
 						command: "status", 
-						value: `${Math.random()}` })
+						value: `${Math.floor(Math.random() * 20)}` })
 				,5000);
 
 		setInterval(async () =>
