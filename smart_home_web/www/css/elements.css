@@ -1,4 +1,12 @@
 
+input[orient="vertical"] {
+	#transform: rotate(90deg);
+	
+
+-webkit-appearance: slider-vertical;
+	
+}
+
 
 input[type="range"],
 input[type="range"]::-webkit-slider-runnable-track,
@@ -10,8 +18,8 @@ input[type="range"]::-webkit-slider-thumb {
 	background: #fafafa;
 	background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) calc(var(--value) * -1%), rgba(255,255,255,1) calc(var(--value) * -1%), rgba(255,255,255,1) 100%);
 	border-radius: 20px;
-	min-width: 50px;
-	min-height: 50px;
+	min-width: 0px;
+	min-height: 0px;
 	#overflow: hidden;
 }
 
@@ -73,44 +81,17 @@ input[type=range][orient="vertical"]::-moz-range-thumb {
  *
  */
 
-html,
-body {
-	height: 100%;
-}
-
-* {
-	padding: 0;
-	margin: 0;
-	box-sizing: border-box;
-}
-
-body {
-	display: grid;
-	place-items: center;
-}
-
-main {
-	display: flex;
-	flex-direction: column;
-	gap: 2.2em;
-	padding: 1em 0;
-}
-
-html::before {
-	content: "";
-	position: fixed;
-	left: 0;
-	top: 0;
-	width: 100vw;
-	height: 100vh;
-	background: radial-gradient(circle at center, #fff, #fafafa);
-	display: block;
-}
-
 /* === range theme and appearance === */
-input[type="range"] {
+input[type="range"]{
 	font-size: 1.5rem;
-	width: 12.5em;
+}
+
+input[orient="horizontal"] {
+	height: 50px;
+}
+
+input[orient="vertical"] {
+	width: 50px;
 }
 
 input[type="range"] {
@@ -160,12 +141,18 @@ input[type="range"]:disabled {
 }
 
 /* === WebKit specific styles === */
+
 input[type="range"],
 input[type="range"]::-webkit-slider-runnable-track,
 input[type="range"]::-webkit-slider-thumb {
 	-webkit-appearance: none;
-	background: green;
-	height: 50px; 
+	background: white;
+}
+
+input[orient="horizontal"],
+input[orient="horizontal"]::-webkit-slider-runnable-track,
+input[orient="horizontal"]::-webkit-slider-thumb {
+	height: 50px;
 }
 
 input[type="range"]::-webkit-slider-runnable-track,
@@ -193,6 +180,33 @@ input[type="range"]::-webkit-slider-runnable-track {
 	background: #fafafa;
 }
 
+input[_type*="light_control"],
+input[_type*="light_control"]::-webkit-slider-runnable-track{
+	background: linear-gradient(90deg, rgba(255,109,0,1) 0%, rgba(255,255,255,1) 50%, rgba(184,204,252,1) 100%);
+}
+
+input[_type*="light_control"]::-webkit-slider-thumb {
+	--box-fill: calc(-100vmax - var(--thumb-width, var(--thumb-height))) 0 0
+		100vmax linear-gradient(90deg, rgba(255,109,0,1) 0%, rgba(255,255,255,1) 50%, rgba(184,204,252,1) 100%);
+	background: transparent; #linear-gradient(90deg, rgba(255,109,0,1) 0%, rgba(255,255,255,1) 50%, rgba(184,204,252,1) 100%);
+	background-color: transparent; #linear-gradient(90deg, rgba(255,109,0,1) 0%, rgba(255,255,255,1) 50%, rgba(184,204,252,1) 100%);
+	
+	width: 3px !important;
+	background: black;
+	#border-right: 3px solid black;
+}
+
+input[_type*="light_control"]::-moz-range-progress {
+	background: transparent !important;
+	border-right: 3px solid black;
+}
+
+input[_type*="light_control"]::-moz-range-thumb {
+	background: black;
+	width: 10px;
+	height: 10px;
+}
+
 /* === Firefox specific styles === */
 input[type="range"],
 input[type="range"]::-moz-range-track,
@@ -210,6 +224,7 @@ input[type="range"]::-moz-range-progress {
 
 input[type="range"]::-moz-range-thumb {
 	background: #3b7ff4;
+	background: transparent;
 	width: 0px;
 	height: 0px;
 	cursor: grab;
@@ -221,7 +236,8 @@ input[type="range"]:active::-moz-range-thumb {
 
 input[type="range"]::-moz-range-track {
 	width: 100%;
-	background: #fafafa;
+	background: transparent;
+	#white
 }
 
 input[type="range"]::-moz-range-progress {

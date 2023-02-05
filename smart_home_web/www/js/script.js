@@ -67,7 +67,7 @@ const update = () => {
 				"item": el.item
 			}
 		}, e => {
-			console.log("updater", e);
+			//console.log("updater", e);
 			//let json = JSON.parse(e);
 			//rm.attributes.status.value = json.value
 
@@ -95,6 +95,10 @@ const set_room = (room_id) => {
 		let scen = scenes_data.find(i => i.id == item.scene);
 		scen = scen ? scen.name : "None";
 		scene_title.innerText = `Scene: ${ scen }`;
+		
+		console.log(item.elements);	
+		
+		item.elements.length > 0 ? (() => {
 
 		item.elements.forEach(el => {
 			let d = devices_data.find(f => f.name == el["device"]) || "root???";
@@ -105,9 +109,17 @@ const set_room = (room_id) => {
 							status=""
 							_device="${el.device}"
 							_item="${el.item}">
-						<i class="${ el.icons?.[0] || "fa fa-light-switch" }"></i>
-						${ el.type.includes("sensor") ?
-						`<h2></h2>`
+						
+						${!el.type.includes("stream") ? `<i class="${ el.icons?.[0] || "fa fa-light-switch" }"></i>` : "" }
+						
+						${el.type.includes("stream") ? `
+			        		<video id="videoPlayer" controls muted="muted" autoplay>
+			            	<source src="/video" type="video/mp4" />
+			        	</video>` : ""}
+						
+						${ el.type.includes("light_control") ?
+						`<input _type="light_control" orient="horizontal" type="range" min="0" max="100" step="5" value="75" oninput="this.style.setProperty('--value',this.value); this.style.setProperty('--text-value', JSON.stringify(this.value))" style="--value: 45;">
+						<input orient="vertical" type="range" min="0" max="100" step="5" value="15" oninput="this.style.setProperty('--value',this.value); this.style.setProperty('--text-value', JSON.stringify(this.value))" style="--value: 45;">`
 						: `` }
 						<h1>${el.id}</h1>
 						<h3>${el.device}</h3>
@@ -144,6 +156,8 @@ const set_room = (room_id) => {
 		});
 
 		update();
+		
+		})() : cards.innerHTML = "<p style='font-size: 2em'>no data</p>";
 
 	});
 }
@@ -201,6 +215,7 @@ const process = (message) => {
 	// Now hardcoded, sorry
 	json.item = json.item ? json.item : json.pin || 0;
 	let rm = cards.querySelector(`card[_device="${json.device}"][_item="${json.item}"]`);
+	console.log("device is", rm);
 	if (rm) {
 		rm.attributes.status.value = json.value;
 	}
@@ -443,9 +458,9 @@ const init_app = async () => {
 document.addEventListener("DOMContentLoaded", async (e) => {
 
 
-	init_websock();
+	
 
-	await init_app();
+	await init_app().then(e => init_websock());
 
 	console.log("DOMContentLoaded");
 });

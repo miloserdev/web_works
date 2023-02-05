@@ -283,11 +283,13 @@
 						body = JSON.parse(body);
 						_ret = body;
 					} catch (e) {
-						_ret["value"] = body;
+						_ret["value"] = body || "dead";
 					}
 					
-					_ret["command"] ? null : _ret["command"] = data["command"];
+					//_ret["command"] ? null : _ret["command"] = data["command"];
 					_ret["device"] ? null : _ret["device"] = data["device"];
+					_ret["item"] ? null : _ret["item"] =
+						data["args"] ? data["args"]["item"] || null : null;;
 					
 					console.log("wi", _ret);
 					broadcast(_ret);
@@ -326,7 +328,18 @@
 			}
 
 		} catch (e) {
-			// console.log("error", e);
+			console.log(e);
+			_ret = {
+				device: data.device,
+				item: item,
+				value: "dead",
+				error: {
+					errno: e.cause.errno,
+					code: e.cause.code
+				}
+			};
+			broadcast(_ret);
+			return _ret;
 		}
 
 		return _ret;
@@ -360,6 +373,7 @@
 			let _ret = await process(data);
 			_ret["command"] ? null : _ret["command"] = data["command"];
 			_ret["device"] ? null : _ret["device"] = data["device"];
+			_ret["item"] ? null : _ret["item"] = data["item"];
 
 			broadcast(_ret);
 		});
@@ -376,11 +390,52 @@
 
 
 
-	const get_listener = async (req, res, query) =>
-		((href = query.href == "/" ? "index.html" : query.href) =>
-			fs.readFile(__dirname + (req.domain == "v2" ?
-				"/www2/" : "/www/") + href, async (err, fd) =>
-				err ? await not_found(res) : res.writeHead(200).end(fd)))();
+	const get_listener = async (req, res, query) => {
+		
+		// console.log(query.href)
+		
+		switch (query.href) {
+			
+			case "/video": {
+				
+    const range = req.headers.range;
+    if (!range) {
+        res.status(400).send("Requires Range header");
+    }
+    const videoPath = "/home/max/to_git/my_portfolio/www/img/18101513.mp4";
+    const videoSize = fs.statSync(videoPath).size;
+    const CHUNK_SIZE = 10 ** 6;
+    const start = Number(range.replace(/\D/g, ""));
+    const end = Math.min(start + CHUNK_SIZE, videoSize - 1);
+    const contentLength = end - start + 1;
+    const headers = {
+        "Content-Range": `bytes ${start}-${end}/${videoSize}`,
+        "Accept-Ranges": "bytes",
+        "Content-Length": contentLength,
+        "Content-Type": "video/mp4",
+    };
+    res.writeHead(206, headers);
+    const videoStream = fs.createReadStream(videoPath, { start, end });
+
+	videoStream.pipe(res);
+    
+    	break;
+    
+			}
+			
+			default: {
+				
+		href = query.href == "/" ? "index.html" : query.href;
+		fs.readFile(__dirname + (req.domain == "v2" ?
+			"/www2/" : "/www/") + href, async (err, fd) =>
+			err ? await not_found(res) : res.writeHead(200).end(fd))
+		}
+
+				break;
+			}
+		}
+		
+		
 
 	const not_found = async (res, json = false) =>
 		json ? res.setHeader('Content-Type', 'application/json')
@@ -471,21 +526,21 @@
 						item: "door2",
 						command: "status", 
 						value: `${Math.floor(Math.random() * 2)}` })
-				,500);
+				,500000);
 		
 		setInterval(async () =>
 			broadcast({ device: "root",
 						item: "door1",
 						command: "status", 
 						value: `${Math.floor(Math.random() * 2)}` })
-				,1000);
+				,1000000);
 		
 		setInterval(async () =>
 			broadcast({ device: "root",
 						item: "humd1",
 						command: "status", 
 						value: `${Math.floor(Math.random() * 200)}` })
-				,100);
+				,100000);
 				
 		
 

@@ -10,7 +10,7 @@
       "elements": [
         {
           "id": "button_1",
-          "type": "big button",
+          "type": "light_control button",
           "device": "relay_array_1",
           "item": "33",
           "icons": { "0": "fa fa-light-switch" }
@@ -45,6 +45,14 @@
           "item": "door2",
           "values": { "0": "Closed", "1": "Open" },
           "icons": { "0": "fa fa-door-closed", "1": "fa fa-door-open" }
+        },
+        {
+          "id": "intercom_1",
+          "type": "large stream",
+          "device": "root",
+          "item": "door2",
+          "values": { "0": "Closed", "1": "Open" },
+          "icons": { "0": "fa fa-camera" }
         }
       ]
     },
@@ -184,6 +192,10 @@
   			{
   				"id": "door2",
   				"type": "phantom"
+  			},
+  			{
+  				"id": "intercom_1",
+  				"type": "phantom stream"
   			}
   		]
   	},

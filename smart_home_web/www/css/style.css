@@ -4,6 +4,14 @@
 	margin: 0;
 	font-family: 'Lato', sans-serif;
 	color: white;
+	
+	--background: #171717af;
+	--background-solid: #171717;
+	--second-background: #292929af;
+	--border: 2px solid #29292930;
+	--border-radius: 20px;
+	--blur: saturate(180%) blur(20px);
+	--fa-background: #ffffff30;
 }
 
 p {
@@ -26,7 +34,7 @@ app {
 	
 	width: 100%;
 	height: 100%;
-	background: #171717;
+	background: var(--background-solid);
 	background: black;
 }
 
@@ -65,8 +73,8 @@ header {
 	/*! box-shadow: 0 -5px 27px 0 rgb(0, 0, 0); */
 	/*! border-radius: 0px 0px 50px 50px; */
 	background: #292929;
-	background: #292929af;
-	backdrop-filter: saturate(180%) blur(20px);
+	background: var(--second-background);
+	backdrop-filter: var(--blur);
 	z-index: 99;
 	justify-content: center;
 	/*! justify-items: center; */
@@ -80,9 +88,8 @@ posthead {
 	grid-area: posthead;
 	width: 100%;
 	height: fit-content;
-	background: #171717;
-	background: #171717af;
-	backdrop-filter: saturate(180%) blur(20px);
+	background: var(--background);
+	backdrop-filter: var(--blur);
 	padding: 20px;
 	z-index: 9;
 }
@@ -118,7 +125,7 @@ linear_scroller {
 	z-index: 9;
 	position: relative;
 	/*! background: white; */
-	/*! backdrop-filter: saturate(180%) blur(20px); */
+	/*! backdrop-filter: var(--blur); */
 }
 
 a[button] {
@@ -186,10 +193,10 @@ card {
 display: grid;
 align-items: center;
 justify-content: center;
-border-radius: 30px;
+border-radius: var(--border-radius);
 color: white;
-border: 2px solid #292929;
-background: #171717;
+border: var(--border);
+background: var(--background);
 position: relative;
 /*! filter: drop-shadow(10px 10px 10px #d0d0d020); */
 
@@ -198,12 +205,12 @@ overflow: hidden;
 	padding: 10px;
 		display: grid;
   grid-template-areas: 
-    "icon value"
-		". ."
-    "id ."
-    "device ."; 
-	grid-template-columns: auto 1fr;
+    "icon   . value" ".      .     .    " "id     .     .    " "device .     .    "; 
+	grid-template-columns: 60px 1fr;
 	grid-template-rows: auto 1fr auto auto;
+backdrop-filter: var(--blur);
+grid-gap: 10px;
+filter: drop-shadow(5px 5px 40px var(--background));
 }
 
 
@@ -286,46 +293,94 @@ card[_type*="big"] {
 grid-row: auto / span 2;
 }
 
-
 card[_type*="large"] {
-width: 300px;
-  grid-column: auto / span 2;
-  grid-row: auto / span 2;
+/*! width: 300px; */
+  grid-column: auto / span 6;
+  grid-row: auto / span 4;
+}
+
+
+video {
+	border-radius: var(--border-radius);
+	outline: none;
+}
+
+card[_type*="stream"] {
+  grid-column: auto / span 6;
+  grid-row: auto / span 4;
+  grid-template-areas: 
+		"value value value"
+		"id     .     device";
+	#grid-template-columns: 60px 1fr;
+	#grid-template-rows: auto auto;
+}
+
+card[_type*="stream"] > video {
+	width: 100%;
+	grid-area: value;
 }
 
 card[status="on"] {
-	#border: 2px solid #0071e3;
+	#border: #0071e3;
 }
 card[status="on"]:befores {
 	background: #0071e3;
 	background: linear-gradient(to bottom, #59a2fb 0%, #3976f6 100%);
 }
 card[status="on"] > .fa {
+	filter: drop-shadow(5px 5px 40px #3976f6);
 	background: linear-gradient(to bottom, #59a2fb 0%, #3976f6 100%);
 }
 
 card[status="off"] {
-	#border: 2px solid #fa2a42;
+	#border: #fa2a42;
 }
 card[status="off"]:befores {
 	/*! background: #fa2a42; */
 	background: linear-gradient(to bottom, #fb5959 0%, #f63939 100%);
 }
 card[status="off"] > .fa {
+	filter: drop-shadow(5px 5px 40px #f63939);
 	background: linear-gradient(to bottom, #fb5959 0%, #f63939 100%);
 	background: #ffffff2e;
 }
 
 
 card[status="unknown"] {
-	#border: 2px solid #fdd32e;
+	#border: #fdd32e;
 }
 card[status="unknown"]:befores {
 	background: #fdd32e;
 }
 card[status="unknown"] > .fa {
 	background: #fdd32e;
+	filter: drop-shadow(5px 5px 40px #fdd32e);
 }
+
+
+
+card[_type*="light_control"] {
+  grid-column: auto / span 4;
+  grid-row: auto / span 4;
+	grid-template-areas: "icon center input"
+		  		  		  		  "le le input    "
+				  		  		    "id . ."
+				  		  		    "device . .";
+	grid-template-columns: 60px 1fr 1fr;
+	grid-template-rows: auto 1fr 0px 10px;
+}
+
+card[_type*="light_control"] > input[type=range] {
+	grid-area: input;
+	height: 100%;
+}
+card[_type*="light_control"] > input[_type="light_control"] {
+	grid-area: le;
+	height: 50px;
+}
+
+
+
 
 
 @keyframes error {
@@ -339,7 +394,7 @@ card[status="unknown"] > .fa {
 }
 
 card[status="dead"] {
-	border: 2px solid #fa2a42;
+	border: #fa2a42;
 }
 card[status="dead"]:befores {
 	background: #fdd32e;
@@ -380,13 +435,14 @@ cards>card>.fa {
 	font-weight: normal;
         word-break: break-word;
         z-index: 2;
-	background: #ffffff42;
+	background: var(--fa-background);
 	padding: 15px;
 	border-radius: 90px;
         width: 50px;
         height: 50px;
         place-content: center;
         display: grid;
+	
 }
 
 cards>card>h1 {
@@ -440,6 +496,16 @@ container {
   left: 0;
   right: 0;
   bottom: 0;
+	
+	background: no-repeat center url(https://media.istockphoto.com/id/157313955/photo/home-at-night.jpg?s=612x612&w=0&k=20&c=HGXW_w910PK4HHwoa9SuCn8Hu5SWSz-56qPu2hIfWus=);
+	
+	/*! background: radial-gradient(63.62% 69.52% at 100% 0%, rgba(247, 214, 98, 0.8) 0%, rgba(247, 214, 98, 0.168) 52.08%, rgba(247, 214, 98, 0) 100%), 
+		linear-gradient(208.42deg, #F0422A 7.46%, rgba(240, 88, 42, 0.18) 42.58%, rgba(240, 101, 42, 0) 64.13%), 
+		radial-gradient(114.51% 122.83% at 0% -15.36%, #E74F6A 0%, rgba(231, 79, 106, 0.22) 66.72%, rgba(231, 79, 106, 0) 100%),
+		linear-gradient(333.95deg, rgba(83, 208, 236, 0.85) -7.76%, rgba(83, 208, 236, 0.204) 19.67%, rgba(138, 137, 190, 0) 35.42%),
+		radial-gradient(109.15% 148.57% at 4.46% 98.44%, #1B3180 0%, rgba(27, 49, 128, 0) 100%),
+		linear-gradient(141.57deg, #4EADEB 19.08%, rgba(78, 173, 235, 0) 98.72%); */ background-blend-mode: overlay, lighten, color-dodge, screen, saturation, color; /*! filter: blur(0px); */
+  background-size: cover;
 }
 
 
@@ -522,8 +588,9 @@ footer {
 	display: grid;
 	grid-area: footer;
 	width: 100vw;
-	background: #171717af;
-	backdrop-filter: saturate(180%) blur(20px);
+	background: var(--background);
+	border-top: var(--border);
+	backdrop-filter: var(--blur);
 	z-index: 9;
 }
 
