@@ -1,0 +1,127 @@
+<!DOCTYPE HTML>
+</html>
+<head>
+	<meta charset="utf-8">
+	<link rel="manifest" href="./manifest.json">
+	<meta name="viewport" content="initial-scale=1">
+	<meta name="viewport" 
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+  <meta http-equiv="Cache-Control" content="no-cache" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="msapplication-starturl" content="/">
+
+  <link rel="icon" type="image/svg" sizes="420x420" href="./images/A.svg">
+  <link rel="apple-touch-icon" type="image/svg" sizes="420x420" href="./images/A.svg">
+
+
+	<link href="./css/style.css" rel="stylesheet">
+	<link href="./css/elements.css" rel="stylesheet">
+	<!--	<link href="./css/cards.css" rel="stylesheet"> -->
+	<link rel="stylesheet" href="./css/webfonts/all.css">
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+</head>
+<body>
+</body>
+<app>
+	<posthead>
+	<h3 id="room_title"></h3>
+	<h4 id="scene_title"></h4>
+	<!--
+		<linear_scroller id="automations">
+		
+					<round_holder>
+					<round_push>
+				<a button flat linear>
+					<i class="fa fa-cog fa-spin"></i>
+					<i class="fa fa-bolt"></i>
+				</a>
+
+					</round_push>
+					<h4>Settings</h4>
+					</round_holder>
+
+					<round_holder>
+					<round_push><a button fa> <i class="fa fa-snooze"></i> </a></round_push>
+					<h4>Sleep</h4>
+					</round_holder>
+
+					<round_holder>
+					<round_push><a button fa> <i class="fa fa-guitar-electric"></i> </a></round_push>
+					<h4>Rock</h4>
+					</round_holder>
+
+					<round_holder>
+					<round_push><a button fa> <i class="fa fa-piano"></i> </a></round_push>
+					<h4>Classic 1</h4>
+					</round_holder>
+
+					<round_holder>
+					<round_push><a button fa> <i class="fa fa-record-vinyl"></i> </a></round_push>
+					<h4>Classic 2</h4>
+					</round_holder>
+
+					<round_holder>
+					<round_push><a button fa> <i class="fa fa-list-music"></i> </a></round_push>
+					<h4>Relax</h4>
+					</round_holder>
+			
+		</linear_scroller>
+		
+		-->
+	</posthead>
+	<container>
+	<!-- 
+	<input type="range">
+	<input orient="horizontal" type="range" min="0" max="100" step="5" value="75" oninput="this.style.setProperty('--value',this.value); this.style.setProperty('--text-value', JSON.stringify(this.value))" style="--value: 45;">
+			<input orient="vertical" type="range" min="0" max="100" step="5" value="75" oninput="this.style.setProperty('--value',this.value); this.style.setProperty('--text-value', JSON.stringify(this.value))" style="--value: 45;">
+	 -->
+	 	<cards id="cards">
+		<!-- 
+			<card id="gas_boiler_status_1" normal="" status="off">
+				<h1>Gas Status</h1>
+				<img src="http://www.westinghousewaterheating.com/source/img/Westinghouse-UFT.png"/>
+			</card>
+			<card id="gas_boiler_status_1" normal="" status="off">
+				<h1>Gas Status</h1>
+			</card>
+			<card id="gas_boiler_1" big="" status="off" style="width: 300px;">
+				<h1>Gas Boiler</h1>
+				<img src="http://www.westinghousewaterheating.com/source/img/Westinghouse-UFT.png"/>
+			</card>
+			<card id="gas_boiler_1" large="" status="off" style="width: 300px;">
+				<h1>Gas Boiler</h1>
+				<img src="https://gasfast.org/wp-content/uploads/2021/08/Logic_Plus_Combi_Right_Facing-1.png"/>
+			</card>
+			<card id="gas_boiler_1" big="" status="off" style="width: 300px;">
+				<h1>Gas Boiler</h1>
+				<img src="https://thumb.tildacdn.com/tild3466-6465-4137-a665-616137333861/-/resize/640x/-/format/webp/Final11.png"/>
+			</card>
+			<card id="gas_boiler_status_1" normal="" status="off">
+				<h1>Gas Status</h1>
+			</card>
+		 -->
+		</cards>
+	</container>
+	<footer>
+		<linear_scroller id="rooms_holder">
+		<!-- 
+			<a button etc>
+			<i class="fa fa-snowflake">
+			</i>Boiler Room </a>
+			<a button etc>Living Room</a>
+			<a button etc>Kitcken</a>
+			<a button etc>Room 1</a>
+			<a button etc>Room 2</a>
+		 -->
+		</linear_scroller>
+	</footer>
+</app>
+
+	<script src="./js/script.js"></script>
+<!--	https://raw.githubusercontent.com/Andy-set-studio/modern-css-reset/master/src/reset.css
+	-->
+</html>
